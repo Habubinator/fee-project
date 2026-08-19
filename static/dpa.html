@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Processing Agreement — App Data API</title>
+<meta name="description" content="App Data API — GDPR Data Processing Agreement for B2B API clients.">
+<link rel="canonical" href="https://data.censored-link.com/dpa.html">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --black: #080808; --text: #f5f0ea; --muted: rgba(245,240,234,0.45); --yellow: #F5A623; --border: rgba(245,166,35,0.1); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Outfit', sans-serif; background: var(--black); color: var(--text); line-height: 1.75; }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 3rem; border-bottom: 1px solid var(--border); }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--yellow); text-decoration: none; letter-spacing: 0.06em; }
+  .logo-tag { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); border-radius: 3px; padding: 0.2rem 0.55rem; }
+  .nav-back { font-size: 0.83rem; color: var(--muted); text-decoration: none; }
+  .nav-back:hover { color: var(--text); }
+  main { max-width: 720px; margin: 4rem auto; padding: 0 2rem 6rem; }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; letter-spacing: 0.04em; margin-bottom: 0.5rem; }
+  .updated { font-size: 0.8rem; color: var(--muted); margin-bottom: 3rem; }
+  h2 { font-size: 1.05rem; font-weight: 600; margin: 2.5rem 0 0.6rem; color: var(--yellow); }
+  p { font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem; }
+  ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+  li { font-size: 0.9rem; color: var(--muted); margin-bottom: 0.35rem; }
+  a { color: var(--yellow); }
+  .notice { background: rgba(245,166,35,0.06); border: 1px solid rgba(245,166,35,0.2); border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; font-size: 0.88rem; color: var(--muted); }
+  footer { text-align: center; padding: 2rem; font-size: 0.78rem; color: var(--muted); border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<nav>
+  <div style="display:flex;align-items:center;gap:0.75rem">
+    <a class="logo" href="https://data.censored-link.com">APP</a>
+    <span class="logo-tag">Data API</span>
+  </div>
+  <a class="nav-back" href="https://data.censored-link.com">← Back to API</a>
+</nav>
+<main>
+  <h1>Data Processing Agreement</h1>
+  <div class="updated">Last updated: May 2025 &nbsp;·&nbsp; Applies to App Data API (data.censored-link.com)</div>
+
+  <div class="notice">
+    This Data Processing Agreement ("DPA") forms part of the App Data API Terms of Service between App ("Data Processor") and the API client ("Data Controller" or "Client"). It governs the processing of personal data under GDPR (EU) 2016/679 and, where applicable, UK GDPR.
+  </div>
+
+  <h2>1. Definitions</h2>
+  <ul>
+    <li><strong>Controller:</strong> The API client who determines the purpose of data processing.</li>
+    <li><strong>Processor:</strong> App, which processes data on behalf of the Controller.</li>
+    <li><strong>Personal Data:</strong> Any information relating to an identified or identifiable natural person.</li>
+    <li><strong>Processing:</strong> Any operation performed on personal data, including collection, storage, use, or disclosure.</li>
+  </ul>
+
+  <h2>2. Nature of data processed</h2>
+  <p>App's API outputs are strictly anonymized and aggregated. The data sold to API clients does not constitute personal data under GDPR because:</p>
+  <ul>
+    <li>All consumer behavior signals are aggregated across thousands of users. No individual-level data is included.</li>
+    <li>Price history, cancel scores, and dark pattern data are scraped from public pricing pages. No personal data is involved.</li>
+    <li>Competitor mapping and trial terms data are publicly sourced. No personal data is involved.</li>
+  </ul>
+  <p>App is therefore not acting as a Data Processor for the purpose of delivering API outputs. No personal data is transferred to API clients.</p>
+
+  <h2>3. Data controller obligations</h2>
+  <p>If you use App API data in combination with your own user data, you are acting as a Data Controller for that combined processing. You are responsible for:</p>
+  <ul>
+    <li>Ensuring you have a lawful basis for processing your users' data alongside our API outputs.</li>
+    <li>Providing appropriate privacy notices to your users.</li>
+    <li>Complying with GDPR data subject rights requests relating to your own users.</li>
+  </ul>
+
+  <h2>4. App B2C data and B2B signals</h2>
+  <p>App collects personal data from B2C users (email, subscription records) solely to provide the B2C product. A portion of this data is aggregated and anonymized before being made available via the B2B signals endpoint (<code>/v1/signals</code>). This aggregation process:</p>
+  <ul>
+    <li>Removes all individual identifiers before aggregation.</li>
+    <li>Applies minimum cohort sizes (no signal reported for fewer than 100 users).</li>
+    <li>Is covered by App's B2C privacy policy and user consent terms.</li>
+  </ul>
+
+  <h2>5. Security measures</h2>
+  <p>App implements the following technical and organizational measures:</p>
+  <ul>
+    <li>All API traffic is encrypted via TLS 1.2+.</li>
+    <li>API keys are hashed before storage.</li>
+    <li>Access to production systems is restricted to authorized personnel only.</li>
+    <li>Regular security reviews are conducted.</li>
+  </ul>
+
+  <h2>6. Sub-processors</h2>
+  <p>App uses the following sub-processors in delivering the API service:</p>
+  <ul>
+    <li>Cloud hosting provider (VPS/cloud infrastructure)</li>
+    <li>Stripe (payment processing — no personal data from API outputs)</li>
+    <li>Resend / Postmark (transactional email for account notices)</li>
+  </ul>
+
+  <h2>7. Enterprise DPA</h2>
+  <p>Enterprise plan clients requiring a fully executed, countersigned DPA (e.g., for regulatory or procurement purposes) may request one by contacting <a href="mailto:api@app.censored-link.com">api@app.censored-link.com</a>. A custom DPA is included in all Enterprise plan agreements.</p>
+
+  <h2>8. Contact</h2>
+  <p>Data protection inquiries: <a href="mailto:api@app.censored-link.com">api@app.censored-link.com</a></p>
+</main>
+<footer>© 2025 App &nbsp;·&nbsp; <a href="/privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="/terms.html">Terms</a> &nbsp;·&nbsp; <a href="/dpa.html">DPA</a></footer>
+</body>
+</html>

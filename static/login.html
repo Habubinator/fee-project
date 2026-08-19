@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App — Sign in</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:          #f7f3ed;
+    --cream:          #ede8df;
+    --yellow:         #F5A623;
+    --yellow-dark:    #e09318;
+    --yellow-dim:     rgba(245,166,35,0.12);
+    --yellow-border:  rgba(245,166,35,0.35);
+    --ink:            #0d0c0a;
+    --muted:          rgba(13,12,10,0.42);
+    --muted2:         rgba(13,12,10,0.62);
+    --border:         rgba(13,12,10,0.1);
+    --red:            #c0392b;
+    --red-dim:        rgba(192,57,43,0.08);
+    --green:          #2e7d52;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Outfit', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; display: flex; }
+
+  /* ── Layout ── */
+  .auth-layout { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; width: 100%; }
+
+  /* ── Brand panel ── */
+  .auth-brand {
+    background: var(--ink);
+    padding: 3rem 3.5rem;
+    display: flex; flex-direction: column; justify-content: space-between;
+    position: relative; overflow: hidden;
+  }
+  .auth-brand::before {
+    content: '';
+    position: absolute; width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(245,166,35,0.18) 0%, transparent 65%);
+    bottom: -200px; right: -150px; pointer-events: none;
+  }
+  .brand-logo {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.06em;
+    color: var(--yellow); text-decoration: none; position: relative; z-index: 1;
+  }
+  .brand-body { position: relative; z-index: 1; }
+  .brand-body h1 {
+    font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.8rem, 4vw, 4rem);
+    line-height: 1.0; letter-spacing: 0.03em;
+    color: #f5f0ea; margin-bottom: 1rem;
+  }
+  .brand-body h1 span { color: var(--yellow); }
+  .brand-body p { font-size: 1rem; color: rgba(245,240,234,0.55); line-height: 1.6; max-width: 340px; }
+  .brand-features { list-style: none; margin-top: 2.5rem; display: flex; flex-direction: column; gap: 0.85rem; position: relative; z-index: 1; }
+  .brand-features li {
+    display: flex; align-items: center; gap: 0.75rem;
+    font-size: 0.9rem; color: rgba(245,240,234,0.7);
+  }
+  .check {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--yellow-dim); border: 1px solid var(--yellow-border);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .check::after {
+    content: '';
+    width: 5px; height: 9px;
+    border: 2px solid var(--yellow);
+    border-top: none; border-left: none;
+    transform: rotate(45deg) translateY(-1px);
+  }
+  .brand-footer { font-size: 0.75rem; color: rgba(245,240,234,0.22); position: relative; z-index: 1; }
+
+  /* ── Form panel ── */
+  .auth-form-side {
+    display: flex; align-items: center; justify-content: center;
+    padding: 2rem; background: var(--paper);
+  }
+  .auth-card {
+    width: 100%; max-width: 420px;
+    background: #fff;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 2px 6px rgba(13,12,10,0.04), 0 12px 48px rgba(13,12,10,0.08);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Tabs ── */
+  .tab-bar {
+    display: flex; border-bottom: 2px solid var(--border);
+    margin-bottom: 2rem; position: relative;
+  }
+  .tab {
+    flex: 1; padding: 0.6rem 0; font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem; font-weight: 500; color: var(--muted);
+    background: none; border: none; cursor: pointer;
+    transition: color 0.2s; position: relative;
+  }
+  .tab.active { color: var(--ink); }
+  .tab-line {
+    position: absolute; bottom: -2px; left: 0; height: 2px;
+    width: 50%; background: var(--yellow);
+    transition: left 0.25s cubic-bezier(0.4,0,0.2,1);
+  }
+  .tab-line.right { left: 50%; }
+
+  /* ── Form elements ── */
+  .form-group { margin-bottom: 1.15rem; }
+  label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--muted2); margin-bottom: 0.4rem; }
+  .input-wrap { position: relative; }
+  input[type="email"], input[type="password"], input[type="text"] {
+    width: 100%; padding: 0.7rem 1rem; font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem; color: var(--ink);
+    background: var(--paper); border: 1.5px solid var(--border);
+    border-radius: 8px; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  input:focus {
+    border-color: var(--yellow);
+    box-shadow: 0 0 0 3px var(--yellow-dim);
+  }
+  input.field-invalid { border-color: var(--red); }
+  input.field-invalid:focus { box-shadow: 0 0 0 3px var(--red-dim); }
+  .eye-btn {
+    position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    font-size: 0.72rem; font-family: 'Outfit', sans-serif;
+    color: var(--muted); padding: 0.25rem;
+    transition: color 0.2s;
+  }
+  .eye-btn:hover { color: var(--ink); }
+  .field-error { font-size: 0.75rem; color: var(--red); margin-top: 0.3rem; min-height: 1rem; }
+
+  /* Checkbox */
+  .checkbox-row { display: flex; align-items: flex-start; gap: 0.6rem; }
+  .checkbox-row input[type="checkbox"] { margin-top: 2px; accent-color: var(--yellow); flex-shrink: 0; }
+  .checkbox-row label { font-size: 0.8rem; color: var(--muted); cursor: pointer; margin: 0; font-weight: 400; }
+  .checkbox-row a { color: var(--ink); }
+
+  /* Submit button */
+  .btn-submit {
+    width: 100%; padding: 0.85rem; margin-top: 1.5rem;
+    background: var(--yellow); color: var(--ink);
+    font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 600;
+    border: none; border-radius: 8px; cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    min-height: 48px;
+  }
+  .btn-submit:hover:not(:disabled) { background: var(--yellow-dark); box-shadow: 0 6px 24px rgba(245,166,35,0.3); }
+  .btn-submit:active:not(:disabled) { transform: translateY(1px); }
+  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid rgba(13,12,10,0.2); border-top-color: var(--ink);
+    animation: spin 0.7s linear infinite; flex-shrink: 0;
+  }
+
+  /* Form-level error */
+  .form-error {
+    font-size: 0.82rem; color: var(--red);
+    background: var(--red-dim); border: 1px solid rgba(192,57,43,0.2);
+    border-radius: 8px; padding: 0.65rem 0.9rem;
+    margin-bottom: 0.75rem; display: none;
+  }
+  .form-error.visible { display: block; }
+
+  .forgot-link { text-align: right; margin-top: 0.5rem; }
+  .forgot-link a { font-size: 0.78rem; color: var(--muted); text-decoration: none; }
+  .forgot-link a:hover { color: var(--ink); }
+
+  .card-footer { margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border); text-align: center; }
+  .card-footer a { font-size: 0.75rem; color: var(--muted); text-decoration: none; margin: 0 0.5rem; }
+  .card-footer a:hover { color: var(--ink); }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .auth-layout { grid-template-columns: 1fr; }
+    .auth-brand { display: none; }
+    .auth-form-side { padding: 1.5rem 1rem; align-items: flex-start; padding-top: 3rem; }
+    .auth-card { border-radius: 16px; padding: 1.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="auth-layout">
+  <!-- Brand panel -->
+  <div class="auth-brand">
+    <a href="/" class="brand-logo">APP</a>
+    <div class="brand-body">
+      <h1>Know what<br>you pay.<br><span>Cancel what</span><br>you don't.</h1>
+      <p>Automatic subscription detection from your inbox. Price hike alerts. One-tap cancel guides.</p>
+      <ul class="brand-features">
+        <li><span class="check"></span>Gmail subscription detection — 14-day free trial</li>
+        <li><span class="check"></span>Price hike alerts before you're charged</li>
+        <li><span class="check"></span>Step-by-step cancel guides for any service</li>
+      </ul>
+    </div>
+    <div class="brand-footer">Already trusted by early subscribers &nbsp;·&nbsp; $12/year after trial</div>
+  </div>
+
+  <!-- Form panel -->
+  <div class="auth-form-side">
+    <div class="auth-card">
+      <div class="tab-bar">
+        <button class="tab active" data-tab="register">Create account</button>
+        <button class="tab" data-tab="login">Sign in</button>
+        <div class="tab-line" id="tab-line"></div>
+      </div>
+
+      <!-- Register form -->
+      <form id="register-form" novalidate>
+        <div class="form-error" id="reg-error"></div>
+
+        <div class="form-group">
+          <label for="reg-email">Email</label>
+          <input type="email" id="reg-email" autocomplete="email" placeholder="you@censored-link.com">
+          <div class="field-error" id="reg-email-err"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-password">Password</label>
+          <div class="input-wrap">
+            <input type="password" id="reg-password" autocomplete="new-password" placeholder="Min. 8 characters">
+            <button type="button" class="eye-btn" data-for="reg-password">show</button>
+          </div>
+          <div class="field-error" id="reg-password-err"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-confirm">Confirm password</label>
+          <div class="input-wrap">
+            <input type="password" id="reg-confirm" autocomplete="new-password" placeholder="Repeat password">
+            <button type="button" class="eye-btn" data-for="reg-confirm">show</button>
+          </div>
+          <div class="field-error" id="reg-confirm-err"></div>
+        </div>
+
+        <div class="form-group">
+          <div class="checkbox-row">
+            <input type="checkbox" id="reg-terms">
+            <label for="reg-terms">I agree to the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a></label>
+          </div>
+          <div class="field-error" id="reg-terms-err"></div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="reg-btn" data-label="Create account">Create account</button>
+      </form>
+
+      <!-- Login form -->
+      <form id="login-form" novalidate style="display:none">
+        <div class="form-error" id="login-error"></div>
+
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" autocomplete="email" placeholder="you@censored-link.com">
+          <div class="field-error" id="login-email-err"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <div class="input-wrap">
+            <input type="password" id="login-password" autocomplete="current-password" placeholder="Your password">
+            <button type="button" class="eye-btn" data-for="login-password">show</button>
+          </div>
+          <div class="field-error" id="login-password-err"></div>
+        </div>
+
+        <div class="form-group">
+          <div class="checkbox-row">
+            <input type="checkbox" id="login-remember">
+            <label for="login-remember">Remember me</label>
+          </div>
+        </div>
+
+        <div class="forgot-link"><a href="#">Forgot password?</a></div>
+
+        <button type="submit" class="btn-submit" id="login-btn" data-label="Sign in">Sign in</button>
+      </form>
+
+      <div class="card-footer">
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/">← Back to home</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = /censored-link\.com/.test(location.hostname)
+    ? 'https://api.censored-link.com'
+    : '';
+
+  // Redirect if already logged in
+  if (localStorage.getItem('accessToken')) location.href = '/dashboard';
+
+  // ── Tabs ──
+  const tabLine = document.getElementById('tab-line');
+  const tabs = document.querySelectorAll('.tab');
+
+  function setTab(name) {
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    tabLine.classList.toggle('right', name === 'login');
+    document.getElementById('register-form').style.display = name === 'register' ? '' : 'none';
+    document.getElementById('login-form').style.display    = name === 'login'    ? '' : 'none';
+    location.hash = '#' + name;
+  }
+  tabs.forEach(t => t.addEventListener('click', () => setTab(t.dataset.tab)));
+  setTab(location.hash === '#login' ? 'login' : 'register');
+
+  // ── Eye toggles ──
+  document.querySelectorAll('.eye-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const inp = document.getElementById(btn.dataset.for);
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      btn.textContent = inp.type === 'password' ? 'show' : 'hide';
+    });
+  });
+
+  // ── Helpers ──
+  function setLoad(btn, loading) {
+    btn.disabled = loading;
+    btn.innerHTML = loading
+      ? '<span class="spinner"></span>'
+      : btn.dataset.label;
+  }
+  function fieldErr(id, msg) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = msg || '';
+    const inp = el && el.previousElementSibling && el.previousElementSibling.tagName === 'INPUT'
+      ? el.previousElementSibling
+      : null;
+    if (inp) inp.classList.toggle('field-invalid', !!msg);
+  }
+  function formErr(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.toggle('visible', !!msg);
+  }
+  function storeTokens(data) {
+    localStorage.setItem('accessToken',  data.accessToken);
+    localStorage.setItem('refreshToken', data.refreshToken);
+  }
+
+  // ── Register ──
+  document.getElementById('register-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const email    = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const confirm  = document.getElementById('reg-confirm').value;
+    const terms    = document.getElementById('reg-terms').checked;
+    const btn      = document.getElementById('reg-btn');
+
+    // Clear previous errors
+    ['reg-email-err','reg-password-err','reg-confirm-err','reg-terms-err'].forEach(id => fieldErr(id, ''));
+    formErr('reg-error', '');
+
+    let ok = true;
+    if (!email) { fieldErr('reg-email-err', 'Email is required'); ok = false; }
+    if (password.length < 8) { fieldErr('reg-password-err', 'At least 8 characters'); ok = false; }
+    if (password !== confirm) { fieldErr('reg-confirm-err', 'Passwords do not match'); ok = false; }
+    if (!terms) { fieldErr('reg-terms-err', 'You must accept the terms'); ok = false; }
+    if (!ok) return;
+
+    setLoad(btn, true);
+    try {
+      const res  = await fetch(`${API}/v1/auth/register`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        formErr('reg-error', data.error || 'Registration failed');
+        return;
+      }
+      storeTokens(data);
+      location.href = '/dashboard';
+    } catch {
+      formErr('reg-error', 'Network error — please try again');
+    } finally {
+      setLoad(btn, false);
+    }
+  });
+
+  // ── Login ──
+  document.getElementById('login-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const email    = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const btn      = document.getElementById('login-btn');
+
+    ['login-email-err','login-password-err'].forEach(id => fieldErr(id, ''));
+    formErr('login-error', '');
+
+    let ok = true;
+    if (!email)    { fieldErr('login-email-err',    'Email is required');    ok = false; }
+    if (!password) { fieldErr('login-password-err', 'Password is required'); ok = false; }
+    if (!ok) return;
+
+    setLoad(btn, true);
+    try {
+      const res  = await fetch(`${API}/v1/auth/login`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        formErr('login-error', data.error || 'Invalid email or password');
+        return;
+      }
+      storeTokens(data);
+      location.href = '/dashboard';
+    } catch {
+      formErr('login-error', 'Network error — please try again');
+    } finally {
+      setLoad(btn, false);
+    }
+  });
+</script>
+</body>
+</html>

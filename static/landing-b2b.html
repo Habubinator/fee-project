@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App Data API — Subscription Intelligence for Builders</title>
+<meta name="description" content="Subscription intelligence API. Daily price history, cancel difficulty scores, and churn signals for 500+ services.">
+<meta property="og:title" content="App Data API — Subscription Intelligence for Builders">
+<meta property="og:description" content="Subscription intelligence API. Daily price history, cancel difficulty scores, and churn signals for 500+ services.">
+<meta property="og:url" content="https://data.censored-link.com">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="App Data API">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="App Data API — Subscription Intelligence for Builders">
+<meta name="twitter:description" content="Subscription intelligence API. Daily price history, cancel difficulty scores, and churn signals for 500+ services.">
+<link rel="canonical" href="https://data.censored-link.com">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow: #F5A623;
+    --yellow-dark: #e09318;
+    --yellow-dim: rgba(245,166,35,0.1);
+    --yellow-border: rgba(245,166,35,0.2);
+    --peach: #F5C5B0;
+    --black: #080808;
+    --black2: #0f0f0f;
+    --black3: #161616;
+    --border: rgba(245,166,35,0.08);
+    --border2: rgba(245,166,35,0.16);
+    --text: #f5f0ea;
+    --muted: rgba(245,240,234,0.38);
+    --muted2: rgba(245,240,234,0.62);
+    --green: #00d97e;
+    --green-dim: rgba(0,217,126,0.08);
+    --green-border: rgba(0,217,126,0.2);
+    --red: #ff5252;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', sans-serif; background: var(--black); color: var(--text); overflow-x: hidden; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 3rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,8,8,0.88); backdrop-filter: blur(16px);
+  }
+  .nav-left { display: flex; align-items: center; gap: 1rem; }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 0.06em; color: var(--yellow); text-decoration: none; }
+  .logo-tag {
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); border: 1px solid var(--border2); border-radius: 3px;
+    padding: 0.2rem 0.55rem;
+  }
+  .nav-r { display: flex; align-items: center; gap: 2rem; }
+  .nav-r a { font-size: 0.83rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .nav-r a:hover { color: var(--text); }
+  .nav-switch { font-size: 0.83rem; color: var(--yellow); opacity: 0.7; text-decoration: none; transition: opacity 0.2s; }
+  .nav-switch:hover { opacity: 1; }
+  .nav-cta {
+    border: 1px solid var(--yellow); color: var(--yellow); background: transparent;
+    font-size: 0.83rem; font-weight: 500;
+    padding: 0.5rem 1.2rem; border-radius: 4px; text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  .nav-cta:hover { background: var(--yellow); color: var(--black); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; padding: 8rem 3rem 5rem;
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative; overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero::before {
+    content: '';
+    position: absolute; width: 800px; height: 800px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(245,166,35,0.07) 0%, rgba(245,166,35,0.02) 50%, transparent 70%);
+    top: 50%; left: 60%; transform: translate(-50%, -50%);
+    pointer-events: none; animation: glow 9s ease-in-out infinite;
+  }
+  .hero::after {
+    content: 'DATA';
+    position: absolute; bottom: -2rem; right: -1rem;
+    font-family: 'Bebas Neue', sans-serif; font-size: 22vw;
+    color: rgba(245,166,35,0.04); line-height: 1; pointer-events: none;
+    white-space: nowrap; letter-spacing: 0.04em;
+  }
+  @keyframes glow { 0%,100%{transform:translate(-50%,-50%) scale(1);opacity:1} 50%{transform:translate(-50%,-50%) scale(1.1);opacity:0.6} }
+
+  .hero-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+  .hero-meta { display: flex; align-items: center; gap: 2rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+  .live-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--yellow-dim); border: 1px solid var(--yellow-border);
+    color: var(--yellow); font-size: 0.75rem; font-weight: 500;
+    padding: 0.3rem 0.85rem; border-radius: 100px; letter-spacing: 0.06em;
+  }
+  .live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--yellow); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  .hero-meta-stat { font-size: 0.78rem; color: var(--muted); }
+  .hero-meta-stat strong { color: var(--peach); }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4.5rem, 9.5vw, 10.5rem); line-height: 0.88;
+    letter-spacing: 0.03em; color: var(--text); margin-bottom: 2.5rem;
+  }
+  h1 em { color: var(--yellow); font-style: normal; }
+  h1 .outline { -webkit-text-stroke: 1.5px rgba(245,166,35,0.4); color: transparent; }
+
+  .hero-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: end; }
+  .hero-sub { font-size: 1rem; color: var(--muted2); line-height: 1.7; font-weight: 300; max-width: 400px; }
+  .hero-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; }
+  .btn-yellow {
+    background: var(--yellow); color: var(--black);
+    font-size: 0.95rem; font-weight: 600;
+    padding: 0.9rem 2.25rem; border-radius: 4px; text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-yellow:hover { background: #ffb835; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(245,166,35,0.28); }
+  .btn-ghost {
+    border: 1px solid var(--border2); color: var(--muted2);
+    font-size: 0.88rem; padding: 0.85rem 2rem; border-radius: 4px; text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--yellow-border); color: var(--text); }
+  .hero-note { font-size: 0.75rem; color: var(--muted); text-align: right; }
+
+  /* TICKER */
+  .ticker { background: var(--yellow); padding: 0.85rem 0; overflow: hidden; white-space: nowrap; border-bottom: 1px solid var(--border); }
+  .ticker-track { display: inline-flex; animation: ticker 32s linear infinite; }
+  .ticker-track:hover { animation-play-state: paused; }
+  .ticker-item { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.1em; color: var(--black); padding: 0 2.5rem; }
+  .ticker-sep { color: rgba(8,8,8,0.3); }
+  @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+  /* STAT ROW */
+  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--border); }
+  .stat-cell {
+    padding: 2.25rem 2.5rem; border-right: 1px solid var(--border);
+    transition: background 0.2s; position: relative; overflow: hidden;
+  }
+  .stat-cell::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: var(--yellow); transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+  }
+  .stat-cell:hover::after { transform: scaleX(1); }
+  .stat-cell:last-child { border-right: none; }
+  .stat-cell:hover { background: var(--black2); }
+  .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: var(--yellow); letter-spacing: 0.04em; line-height: 1; }
+  .stat-lbl { font-size: 0.78rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.45; }
+
+  /* SEC LABELS */
+  .sec-label { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--yellow); margin-bottom: 0.75rem; }
+  .sec-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 0.9; letter-spacing: 0.03em; margin-bottom: 1rem; }
+  .sec-sub { font-size: 0.9rem; color: var(--muted2); line-height: 1.65; max-width: 480px; font-weight: 300; }
+
+  /* CODE TERMINAL */
+  .terminal-section {
+    padding: 6rem 3rem;
+    position: relative; overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  .terminal-section::before {
+    content: 'API';
+    position: absolute; right: -1rem; top: 50%; transform: translateY(-50%);
+    font-family: 'Bebas Neue', sans-serif; font-size: 22vw;
+    color: rgba(245,166,35,0.03); line-height: 1; pointer-events: none; letter-spacing: 0.04em;
+  }
+  .terminal-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; position: relative; z-index: 1; }
+  .terminal {
+    background: var(--black2); border: 1px solid var(--border2);
+    border-radius: 10px; overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .terminal-bar {
+    background: var(--black3); padding: 0.75rem 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .dot-r { background: rgba(255,82,82,0.6); }
+  .dot-y { background: rgba(245,166,35,0.6); }
+  .dot-g { background: rgba(0,217,126,0.6); }
+  .t-url { font-family: 'Outfit', monospace; font-size: 0.72rem; color: var(--muted); margin-left: 0.5rem; }
+  .terminal-body { padding: 1.25rem 1.5rem; font-family: monospace; font-size: 0.78rem; line-height: 2; }
+  .t-comment { color: var(--muted); }
+  .t-key { color: #79c0ff; }
+  .t-str { color: var(--yellow); }
+  .t-num { color: var(--peach); }
+  .t-punct { color: var(--muted); }
+  .t-green { color: var(--green); }
+  .t-red { color: var(--red); }
+
+  /* DATA CATALOG */
+  .catalog-section {
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .catalog-section::after {
+    content: 'CATALOG';
+    position: absolute; left: -1rem; bottom: -2rem;
+    font-family: 'Bebas Neue', sans-serif; font-size: 16vw;
+    color: rgba(245,166,35,0.03); line-height: 1; pointer-events: none; letter-spacing: 0.04em;
+  }
+  .catalog-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid var(--border);
+  }
+  .catalog-grid-bottom { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .catalog-header { padding: 3rem 3rem 2rem; border-bottom: 1px solid var(--border); max-width: 1100px; }
+  .cat-card {
+    padding: 2.5rem; border-right: 1px solid var(--border);
+    position: relative; overflow: hidden;
+    transition: background 0.2s;
+  }
+  .cat-card:last-child { border-right: none; }
+  .cat-card:hover { background: var(--black2); }
+  .cat-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 5rem;
+    color: rgba(245,166,35,0.05); position: absolute;
+    top: 0.5rem; right: 1rem; line-height: 1; pointer-events: none;
+    transition: color 0.2s;
+  }
+  .cat-card:hover .cat-num { color: rgba(245,166,35,0.1); }
+  .cat-endpoint {
+    display: inline-block; font-family: monospace; font-size: 0.72rem;
+    background: var(--yellow-dim); color: var(--yellow); border: 1px solid var(--yellow-border);
+    padding: 0.25rem 0.65rem; border-radius: 3px; margin-bottom: 1rem; letter-spacing: 0.04em;
+  }
+  .cat-title { font-weight: 600; font-size: 1rem; margin-bottom: 0.5rem; color: var(--peach); }
+  .cat-body { font-size: 0.82rem; color: var(--muted); line-height: 1.7; }
+  .cat-tag {
+    display: inline-block; margin-top: 1rem;
+    border: 1px solid var(--yellow-border); font-size: 0.68rem; color: var(--yellow);
+    padding: 0.2rem 0.6rem; border-radius: 2px; letter-spacing: 0.07em; font-weight: 500;
+  }
+
+  /* SCHEMA TABLE */
+  .schema-section {
+    padding: 6rem 3rem;
+    border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .schema-section::before {
+    content: 'SCHEMA';
+    position: absolute; right: -1rem; top: 50%; transform: translateY(-50%);
+    font-family: 'Bebas Neue', sans-serif; font-size: 14vw;
+    color: rgba(245,166,35,0.03); line-height: 1; pointer-events: none; letter-spacing: 0.04em;
+  }
+  .schema-inner { max-width: 1100px; margin: 0 auto; }
+  .schema-table { margin-top: 2.5rem; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .schema-header {
+    display: grid; grid-template-columns: 1.4fr 0.8fr 1fr 1.8fr;
+    gap: 1rem; padding: 0.85rem 1.5rem;
+    background: var(--black2); border-bottom: 1px solid var(--border);
+    font-size: 0.68rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  }
+  .schema-row {
+    display: grid; grid-template-columns: 1.4fr 0.8fr 1fr 1.8fr;
+    gap: 1rem; padding: 1.1rem 1.5rem; align-items: start;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .schema-row:last-child { border-bottom: none; }
+  .schema-row:hover { background: var(--black2); }
+  .s-field { font-family: monospace; font-size: 0.82rem; color: #79c0ff; }
+  .s-type { font-family: monospace; font-size: 0.78rem; color: var(--peach); }
+  .s-endpoint { font-family: monospace; font-size: 0.72rem; color: var(--yellow); opacity: 0.8; }
+  .s-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+  /* USE CASES */
+  .usecases-section {
+    border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .usecases-section::before {
+    content: 'USE';
+    position: absolute; left: -1rem; top: 50%; transform: translateY(-50%);
+    font-family: 'Bebas Neue', sans-serif; font-size: 22vw;
+    color: rgba(245,166,35,0.03); line-height: 1; pointer-events: none; letter-spacing: 0.04em;
+  }
+  .usecases-header { padding: 4rem 3rem 2.5rem; border-bottom: 1px solid var(--border); }
+  .usecase-grid { display: grid; grid-template-columns: repeat(2, 1fr); border-bottom: 1px solid var(--border); }
+  .uc-card {
+    padding: 3rem; border-right: 1px solid var(--border);
+    transition: background 0.2s; position: relative; overflow: hidden;
+  }
+  .uc-card:nth-child(2) { border-right: none; }
+  .uc-card:nth-child(3) { border-right: 1px solid var(--border); border-top: 1px solid var(--border); border-bottom: none; }
+  .uc-card:nth-child(4) { border-right: none; border-top: 1px solid var(--border); border-bottom: none; }
+  .uc-card:hover { background: var(--black2); }
+  .uc-icon {
+    width: 38px; height: 38px; border: 1px solid var(--yellow-border);
+    border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.25rem;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .uc-card:hover .uc-icon { border-color: rgba(245,166,35,0.4); background: var(--yellow-dim); }
+  .uc-title { font-weight: 600; font-size: 1rem; margin-bottom: 0.5rem; color: var(--peach); }
+  .uc-body { font-size: 0.83rem; color: var(--muted); line-height: 1.7; }
+  .uc-tag { display: inline-block; margin-top: 1rem; border: 1px solid var(--yellow-border); font-size: 0.68rem; color: var(--yellow); padding: 0.2rem 0.6rem; border-radius: 2px; letter-spacing: 0.07em; font-weight: 500; }
+
+  /* PRICING */
+  .pricing-section {
+    padding: 6rem 3rem;
+    border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .pricing-section::after {
+    content: 'API';
+    position: absolute; right: -1rem; bottom: -2rem;
+    font-family: 'Bebas Neue', sans-serif; font-size: 22vw;
+    color: rgba(245,166,35,0.03); line-height: 1; pointer-events: none; letter-spacing: 0.04em;
+  }
+  .pricing-inner { max-width: 1100px; margin: 0 auto; }
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border-radius: 10px; overflow: hidden; margin-top: 3rem; }
+  .tier-card { background: var(--black2); padding: 2.25rem 2rem; position: relative; transition: background 0.2s; }
+  .tier-card:hover { background: var(--black3); }
+  .tier-card.featured { background: var(--black3); border: 1px solid var(--yellow-border); border-radius: 0; margin: -1px; }
+  .featured-badge {
+    position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+    background: var(--yellow); color: var(--black);
+    font-family: 'Bebas Neue', sans-serif; font-size: 0.72rem; letter-spacing: 0.1em;
+    padding: 0.25rem 0.9rem; border-radius: 0 0 5px 5px;
+  }
+  .tier-name { font-size: 0.72rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 1rem; }
+  .tier-price { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; line-height: 1; letter-spacing: 0.02em; color: var(--yellow); }
+  .tier-price sup { font-size: 1.2rem; vertical-align: super; color: var(--muted); }
+  .tier-period { font-size: 0.78rem; color: var(--muted); margin: 0.25rem 0 1.5rem; }
+  .tier-feats { list-style: none; font-size: 0.82rem; color: var(--muted2); line-height: 2.1; margin-bottom: 1.75rem; }
+  .tier-feats li::before { content: '→ '; color: var(--yellow); }
+  .tier-feats li.na { color: var(--muted); opacity: 0.4; }
+  .tier-feats li.na::before { content: '— '; color: var(--muted); }
+  .btn-tier {
+    display: block; text-align: center; text-decoration: none;
+    border: 1px solid var(--border2); color: var(--muted2);
+    padding: 0.65rem; border-radius: 5px; font-size: 0.85rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-tier:hover { border-color: var(--yellow-border); color: var(--text); }
+  .btn-tier.primary { background: var(--yellow); color: var(--black); border-color: var(--yellow); font-weight: 600; }
+  .btn-tier.primary:hover { background: #ffb835; box-shadow: 0 4px 20px rgba(245,166,35,0.25); }
+
+  /* CTA STRIP */
+  .cta-strip {
+    padding: 5rem 3rem; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .cta-strip::before {
+    content: ''; position: absolute; width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(245,166,35,0.06) 0%, transparent 70%);
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .cta-strip-inner { max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
+  .cta-strip h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); letter-spacing: 0.03em; line-height: 0.9; margin-bottom: 1rem; }
+  .cta-strip h2 em { color: var(--yellow); font-style: normal; }
+  .cta-strip p { font-size: 0.95rem; color: var(--muted2); margin-bottom: 2.5rem; font-weight: 300; line-height: 1.65; }
+  .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border); padding: 2rem 3rem;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-left { display: flex; align-items: center; gap: 0.75rem; }
+  .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--yellow); letter-spacing: 0.06em; }
+  .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .footer-links a { font-size: 0.78rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--text); }
+  .footer-copy { font-size: 0.72rem; color: var(--muted); opacity: 0.45; }
+
+  /* TABLET */
+  @media(max-width:900px){
+    .stat-row { grid-template-columns: 1fr 1fr; }
+    .stat-cell { border-bottom: 1px solid var(--border); }
+    .terminal-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .catalog-grid, .catalog-grid-bottom { grid-template-columns: 1fr; }
+    .cat-card { border-right: none; border-bottom: 1px solid var(--border); }
+    .usecase-grid { grid-template-columns: 1fr; }
+    .uc-card { border-right: none !important; border-top: 1px solid var(--border) !important; }
+    .uc-card:first-child { border-top: none !important; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .hero-bottom { grid-template-columns: 1fr; gap: 2.5rem; }
+    .hero-actions { align-items: flex-start; }
+    .hero-note { text-align: left; }
+    .schema-header, .schema-row { grid-template-columns: 1fr 0.6fr 2fr; }
+    .schema-header span:nth-child(3), .schema-row .s-endpoint { display: none; }
+  }
+
+  /* PHONE */
+  @media(max-width:520px){
+    nav { padding: 0.9rem 1.25rem; }
+    .nav-r a:not(.nav-cta) { display: none; }
+    .nav-cta { font-size: 0.78rem; padding: 0.45rem 0.9rem; }
+    .logo-tag { display: none; }
+    .hero { padding: 5.5rem 1.25rem 3rem; }
+    .hero::after { font-size: 30vw; }
+    h1 { font-size: clamp(3rem, 15vw, 4.5rem); margin-bottom: 1.75rem; }
+    .hero-meta { gap: 0.75rem; margin-bottom: 1.5rem; }
+    .hero-sub { font-size: 0.9rem; }
+    .btn-yellow { width: 100%; text-align: center; }
+    .btn-ghost { width: 100%; text-align: center; }
+    .hero-note { font-size: 0.7rem; }
+    .ticker { padding: 0.7rem 0; }
+    .ticker-item { font-size: 0.85rem; padding: 0 1.5rem; }
+    .stat-row { grid-template-columns: 1fr 1fr; }
+    .stat-cell { padding: 1.4rem 1.25rem; }
+    .stat-val { font-size: 2.2rem; }
+    .terminal-section, .schema-section, .pricing-section, .cta-strip { padding: 3.5rem 1.25rem; }
+    .usecases-header { padding: 3.5rem 1.25rem 2rem; }
+    .uc-card { padding: 2rem 1.25rem; }
+    .catalog-header { padding: 3rem 1.25rem 2rem; }
+    .cat-card { padding: 2rem 1.25rem; }
+    .terminal-body { font-size: 0.72rem; padding: 1rem; }
+    .schema-header { display: none; }
+    .schema-row { grid-template-columns: 1fr; gap: 0.25rem; padding: 1rem 1.25rem; }
+    .s-endpoint { display: none; }
+    .pricing-grid { gap: 0; }
+    .tier-card { padding: 1.75rem 1.5rem; }
+    .tier-price { font-size: 2.8rem; }
+    footer { flex-direction: column; align-items: flex-start; gap: 1.25rem; padding: 1.75rem 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <a class="logo" href="https://data.censored-link.com">APP</a>
+    <span class="logo-tag">Data API</span>
+  </div>
+  <div class="nav-r">
+    <a href="#catalog">Data catalog</a>
+    <a href="#usecases">Use cases</a>
+    <a href="#pricing">Pricing</a>
+    <a class="nav-switch" href="https://app.censored-link.com">Consumer app →</a>
+    <a href="#pricing" class="nav-cta">Request access</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-meta">
+      <div class="live-badge"><div class="live-dot"></div> API v1 &nbsp;·&nbsp; Live</div>
+      <div class="hero-meta-stat"><strong>500+</strong> services indexed</div>
+      <div class="hero-meta-stat">Refreshed every <strong>24 hours</strong></div>
+    </div>
+    <h1>SUBSCRIPTION<br><em>PRICING</em><br><span class="outline">INTELLIGENCE</span></h1>
+    <div class="hero-bottom">
+      <p class="hero-sub">Real-time and historical pricing data, cancel difficulty scores, dark pattern indexes, and anonymized consumer behavior signals — for 500+ subscription services. One API key. Built for fintech, price comparison, and financial media.</p>
+      <div class="hero-actions">
+        <a href="#pricing" class="btn-yellow">Request data sample &nbsp;→</a>
+        <a href="#catalog" class="btn-ghost">View data catalog &nbsp;↓</a>
+        <div class="hero-note">Free sample available &nbsp;·&nbsp; No commitment required</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item">Price history</span><span class="ticker-item ticker-sep">/ /</span>
+    <span class="ticker-item">Cancel difficulty index</span><span class="ticker-item ticker-sep">/ /</span>
+    <span class="ticker-item">Dark pattern scores</span><span class="ticker-item ticker-sep">/ /</span>
+    <span class="ticker-item">Consumer behavior signals</span><span class="ticker-item ticker-sep">/ /</span>
+    <span class="ticker-item">Competitor mapping</span><span class="ticker-item ticker-sep">/ /</span>
+    <span class="ticker-item">Trial terms database</span><span class="ticker-item ticker-sep">/ /</span>
+    <span class="ticker-item">Price change webhooks</span><span class="ticker-item ticker-sep">/ /</span>
+    <span class="ticker-item">Price history</span><span class="ticker-item ticker-sep">/ /</span>
+    <span class="ticker-item">Cancel difficulty index</span><span class="ticker-item ticker-sep">/ /</span>
+    <span class="ticker-item">Dark pattern scores</span><span class="ticker-item ticker-sep">/ /</span>
+    <span class="ticker-item">Consumer behavior signals</span><span class="ticker-item ticker-sep">/ /</span>
+    <span class="ticker-item">Competitor mapping</span><span class="ticker-item ticker-sep">/ /</span>
+    <span class="ticker-item">Trial terms database</span><span class="ticker-item ticker-sep">/ /</span>
+    <span class="ticker-item">Price change webhooks</span><span class="ticker-item ticker-sep">/ /</span>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stat-row">
+  <div class="stat-cell"><div class="stat-val">500+</div><div class="stat-lbl">subscription services indexed and monitored</div></div>
+  <div class="stat-cell"><div class="stat-val">24h</div><div class="stat-lbl">maximum data staleness on all paid plans</div></div>
+  <div class="stat-cell"><div class="stat-val">18mo</div><div class="stat-lbl">historical price depth from launch date</div></div>
+  <div class="stat-cell"><div class="stat-val">6</div><div class="stat-lbl">distinct datasets accessible from one API key</div></div>
+</div>
+
+<!-- CODE TERMINAL -->
+<section class="terminal-section">
+  <div class="terminal-inner">
+    <div>
+      <div class="sec-label">// Response example</div>
+      <h2 class="sec-title">Clean JSON.<br>Every field<br><em>documented.</em></h2>
+      <p class="sec-sub" style="margin-top:0.75rem">Every endpoint returns structured, typed JSON. Full OpenAPI spec included. SDKs for TypeScript and Python available on request.</p>
+    </div>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+        <span class="t-url">GET /v1/services/netflix/pricing</span>
+      </div>
+      <div class="terminal-body">
+        <span class="t-comment">// 200 OK</span><br>
+        <span class="t-punct">{</span><br>
+        &nbsp;&nbsp;<span class="t-key">"service"</span><span class="t-punct">: </span><span class="t-str">"Netflix"</span><span class="t-punct">,</span><br>
+        &nbsp;&nbsp;<span class="t-key">"plan"</span><span class="t-punct">: </span><span class="t-str">"Standard"</span><span class="t-punct">,</span><br>
+        &nbsp;&nbsp;<span class="t-key">"price_usd"</span><span class="t-punct">: </span><span class="t-num">22.99</span><span class="t-punct">,</span><br>
+        &nbsp;&nbsp;<span class="t-key">"prev_price_usd"</span><span class="t-punct">: </span><span class="t-num">19.99</span><span class="t-punct">,</span><br>
+        &nbsp;&nbsp;<span class="t-key">"hike_date"</span><span class="t-punct">: </span><span class="t-str">"2024-10-01"</span><span class="t-punct">,</span><br>
+        &nbsp;&nbsp;<span class="t-key">"hike_count_12mo"</span><span class="t-punct">: </span><span class="t-num">2</span><span class="t-punct">,</span><br>
+        &nbsp;&nbsp;<span class="t-key">"cancel_score"</span><span class="t-punct">: </span><span class="t-num">3.2</span><span class="t-punct">,</span><span class="t-comment"> // /10</span><br>
+        &nbsp;&nbsp;<span class="t-key">"dark_patterns"</span><span class="t-punct">: [</span><span class="t-str">"confirm_shaming"</span><span class="t-punct">],</span><br>
+        &nbsp;&nbsp;<span class="t-key">"competitors"</span><span class="t-punct">: [{</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-key">"name"</span><span class="t-punct">: </span><span class="t-str">"Disney+"</span><span class="t-punct">,</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-key">"price_usd"</span><span class="t-punct">: </span><span class="t-num">13.99</span><span class="t-punct">,</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="t-key">"save_delta"</span><span class="t-punct">: </span><span class="t-num">-9.00</span><br>
+        &nbsp;&nbsp;<span class="t-punct">}],</span><br>
+        &nbsp;&nbsp;<span class="t-key">"last_verified"</span><span class="t-punct">: </span><span class="t-str">"2025-10-07T14:22:00Z"</span><br>
+        <span class="t-punct">}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA CATALOG -->
+<section class="catalog-section" id="catalog">
+  <div class="catalog-header">
+    <div class="sec-label">// Data catalog</div>
+    <h2 class="sec-title">Six datasets.<br>One API key.</h2>
+    <p class="sec-sub">All data originates from App's own consumer product — scraped, structured, and continuously refreshed. Not sourced from third parties.</p>
+  </div>
+  <div class="catalog-grid">
+    <div class="cat-card">
+      <div class="cat-num">01</div>
+      <div class="cat-endpoint">GET /prices</div>
+      <div class="cat-title">Price history</div>
+      <div class="cat-body">Full timestamped price change log per service, per plan, per country. Goes back 18 months. Includes before/after delta, date of change, and plan-level breakdowns.</div>
+      <div class="cat-tag">CORE DATASET</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-num">02</div>
+      <div class="cat-endpoint">GET /cancel-scores</div>
+      <div class="cat-title">Cancel difficulty index</div>
+      <div class="cat-body">Each service scored 1–10 for cancellation difficulty. Breakdown by dark pattern type: confirm-shaming, forced continuity, roach motel, hidden cancel, fake countdown.</div>
+      <div class="cat-tag">UNIQUE DATA</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-num">03</div>
+      <div class="cat-endpoint">POST /webhooks</div>
+      <div class="cat-title">Price change webhooks</div>
+      <div class="cat-body">Register a URL and receive real-time pushes the moment any tracked service changes pricing. Subscribe to specific services, categories, or country markets.</div>
+      <div class="cat-tag">REAL-TIME</div>
+    </div>
+  </div>
+  <div class="catalog-grid-bottom">
+    <div class="cat-card">
+      <div class="cat-num">04</div>
+      <div class="cat-endpoint">GET /signals</div>
+      <div class="cat-title">Consumer behavior signals</div>
+      <div class="cat-body">Anonymized, aggregated data from B2C users. Which price points trigger cancellations, co-subscription patterns, churn triggers by category. GDPR-clean — no PII, no individual data.</div>
+      <div class="cat-tag">ANONYMIZED</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-num">05</div>
+      <div class="cat-endpoint">GET /competitors</div>
+      <div class="cat-title">Competitor mapping</div>
+      <div class="cat-body">For each service: direct competitors with pricing, feature overlap score, and Switch-Save delta. Same data powering our B2C Switch &amp; Save feature. Updated daily.</div>
+      <div class="cat-tag">LIVE</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-num">06</div>
+      <div class="cat-endpoint">GET /trials</div>
+      <div class="cat-title">Trial terms database</div>
+      <div class="cat-body">Trial length, auto-renew behavior, card requirement, trial-chain availability for 500+ services. Monitored for changes — flagged when terms update.</div>
+      <div class="cat-tag">MONITORED</div>
+    </div>
+  </div>
+</section>
+
+<!-- SCHEMA TABLE -->
+<section class="schema-section">
+  <div class="schema-inner">
+    <div class="sec-label">// Full response schema</div>
+    <h2 class="sec-title">Every field<br><em>typed</em> and documented</h2>
+    <p class="sec-sub" style="margin-top:0.5rem">All responses follow a consistent structure. OpenAPI 3.0 spec available to all customers.</p>
+    <div class="schema-table">
+      <div class="schema-header">
+        <span>Field</span><span>Type</span><span>Endpoint</span><span>Description</span>
+      </div>
+      <div class="schema-row">
+        <div class="s-field">service_id</div><div class="s-type">string</div><div class="s-endpoint">/prices, /cancel-scores</div>
+        <div class="s-desc">Canonical slug identifier — e.g. "netflix", "spotify-premium". Consistent across all endpoints.</div>
+      </div>
+      <div class="schema-row">
+        <div class="s-field">price_history[]</div><div class="s-type">array</div><div class="s-endpoint">/prices</div>
+        <div class="s-desc">Timestamped price snapshots. Each object: {price, date, plan, currency, change_delta, change_pct}.</div>
+      </div>
+      <div class="schema-row">
+        <div class="s-field">cancel_score</div><div class="s-type">float</div><div class="s-endpoint">/cancel-scores</div>
+        <div class="s-desc">1.0–10.0 difficulty rating. 10 = near impossible. Updated when cancel flow changes.</div>
+      </div>
+      <div class="schema-row">
+        <div class="s-field">dark_patterns[]</div><div class="s-type">string[]</div><div class="s-endpoint">/cancel-scores</div>
+        <div class="s-desc">Enum: confirm_shaming, forced_continuity, roach_motel, hidden_cancel, fake_countdown, misdirection.</div>
+      </div>
+      <div class="schema-row">
+        <div class="s-field">churn_threshold_usd</div><div class="s-type">float</div><div class="s-endpoint">/signals</div>
+        <div class="s-desc">Median price point at which users cancel this service — derived from anonymized B2C usage data.</div>
+      </div>
+      <div class="schema-row">
+        <div class="s-field">competitors[]</div><div class="s-type">array</div><div class="s-endpoint">/competitors</div>
+        <div class="s-desc">Rival services with: name, price_usd, overlap_score (0–1), save_delta. Same engine as Switch &amp; Save.</div>
+      </div>
+      <div class="schema-row">
+        <div class="s-field">last_verified</div><div class="s-type">ISO 8601</div><div class="s-endpoint">all</div>
+        <div class="s-desc">Timestamp of last confirmed data refresh. Max 24h staleness on Growth and Enterprise plans.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section class="usecases-section" id="usecases">
+  <div class="usecases-header">
+    <div class="sec-label">// Who builds with this</div>
+    <h2 class="sec-title">Four use cases.<br><em>One</em> dataset.</h2>
+    <p class="sec-sub">Product teams integrating subscription pricing intelligence into existing tools, without building the scraping infrastructure themselves.</p>
+  </div>
+  <div class="usecase-grid">
+    <div class="uc-card">
+      <div class="uc-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16"><rect x="2" y="4" width="12" height="9" rx="1" fill="none" stroke="#F5A623" stroke-width="1.2"/><line x1="5" y1="4" x2="5" y2="2" stroke="#F5A623" stroke-width="1.2"/><line x1="11" y1="4" x2="11" y2="2" stroke="#F5A623" stroke-width="1.2"/><line x1="2" y1="7" x2="14" y2="7" stroke="#F5A623" stroke-width="1.2"/></svg>
+      </div>
+      <div class="uc-title">Fintech &amp; personal finance apps</div>
+      <div class="uc-body">Enrich transaction categorization with real-time pricing data. Alert users to price hikes on detected subscriptions. Surface cancel guides inside your existing app — without building the dataset yourself. Your users get real value; you get a differentiated feature shipped in days, not months.</div>
+      <div class="uc-tag">ENRICHMENT</div>
+    </div>
+    <div class="uc-card">
+      <div class="uc-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="#F5A623" stroke-width="1.2"/><line x1="8" y1="5" x2="8" y2="8" stroke="#F5A623" stroke-width="1.5"/><circle cx="8" cy="10.5" r="0.8" fill="#F5A623"/></svg>
+      </div>
+      <div class="uc-title">Price comparison platforms</div>
+      <div class="uc-body">Power your subscription comparison engine with live pricing for 500+ services. Cancel difficulty scores differentiate you from competitors showing only price. Historical data enables "price trend" features users trust. No scraping infrastructure to maintain — we handle it.</div>
+      <div class="uc-tag">COMPARISON</div>
+    </div>
+    <div class="uc-card">
+      <div class="uc-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="1" fill="none" stroke="#F5A623" stroke-width="1.2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#F5A623" stroke-width="1.2"/><line x1="5" y1="8.5" x2="9" y2="8.5" stroke="#F5A623" stroke-width="1.2"/></svg>
+      </div>
+      <div class="uc-title">Financial media &amp; journalism</div>
+      <div class="uc-body">Register a webhook and get notified the moment Netflix raises prices — before your competition. Pull full price-hike history before writing your piece. Access anonymized churn data when covering subscription fatigue. We become your subscription intelligence desk.</div>
+      <div class="uc-tag">PUBLISHING</div>
+    </div>
+    <div class="uc-card">
+      <div class="uc-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16"><polyline points="2,10 6,5 9,8 14,3" fill="none" stroke="#F5A623" stroke-width="1.2" stroke-linejoin="round"/><polyline points="11,3 14,3 14,6" fill="none" stroke="#F5A623" stroke-width="1.2" stroke-linejoin="round"/><line x1="2" y1="13" x2="14" y2="13" stroke="#F5A623" stroke-width="1.2"/></svg>
+      </div>
+      <div class="uc-title">Consumer advocacy &amp; research</div>
+      <div class="uc-body">The dark pattern index and cancel difficulty scores are unique datasets for consumer rights research. Anonymized behavior signals show how price changes affect real users at scale. License the data for academic studies, regulatory submissions, or policy reporting.</div>
+      <div class="uc-tag">RESEARCH</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="pricing-inner">
+    <div class="sec-label">// API pricing</div>
+    <h2 class="sec-title">Start with a<br><em>free</em> data sample</h2>
+    <p class="sec-sub" style="margin-top:0.5rem">Request 30 days of price history for 10 services — no commitment, no card. All plans include full API documentation and a test environment.</p>
+    <div class="pricing-grid">
+      <div class="tier-card">
+        <div class="tier-name">Starter</div>
+        <div class="tier-price"><sup>$</sup>199</div>
+        <div class="tier-period">per month</div>
+        <ul class="tier-feats">
+          <li>500 API calls / day</li>
+          <li>Price history endpoint</li>
+          <li>Cancel scores</li>
+          <li>Top 100 services</li>
+          <li>REST API + docs</li>
+          <li class="na">Webhooks</li>
+          <li class="na">Consumer signals</li>
+          <li class="na">Competitor mapping</li>
+        </ul>
+        <a href="mailto:api@app.censored-link.com?subject=Starter%20Plan%20Inquiry" class="btn-tier">Get started</a>
+      </div>
+      <div class="tier-card featured">
+        <div class="featured-badge">POPULAR</div>
+        <div class="tier-name">Growth</div>
+        <div class="tier-price"><sup>$</sup>599</div>
+        <div class="tier-period">per month</div>
+        <ul class="tier-feats">
+          <li>5,000 API calls / day</li>
+          <li>All 6 endpoints</li>
+          <li>500+ services</li>
+          <li>Price change webhooks</li>
+          <li>Consumer signals</li>
+          <li>Competitor mapping</li>
+          <li>Slack support channel</li>
+          <li>OpenAPI 3.0 spec</li>
+        </ul>
+        <a href="mailto:api@app.censored-link.com?subject=Growth%20Plan%20Inquiry" class="btn-tier primary">Request access</a>
+      </div>
+      <div class="tier-card">
+        <div class="tier-name">Enterprise</div>
+        <div class="tier-price" style="font-size:2.2rem;margin-top:0.4rem">Custom</div>
+        <div class="tier-period">tailored to your volume</div>
+        <ul class="tier-feats">
+          <li>Unlimited API calls</li>
+          <li>Custom data feeds</li>
+          <li>Raw CSV / JSON export</li>
+          <li>White-label option</li>
+          <li>SLA guarantee</li>
+          <li>Dedicated account manager</li>
+          <li>Data processing agreement</li>
+          <li>Priority webhook delivery</li>
+        </ul>
+        <a href="mailto:api@app.censored-link.com" class="btn-tier">Talk to us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-strip">
+  <div class="cta-strip-inner">
+    <h2>Not sure if the<br>data fits your <em>use case?</em></h2>
+    <p>Request a free sample — 30 days of price history for 10 services of your choice. No commitment, no card, no sales call required unless you want one.</p>
+    <div class="cta-actions">
+      <a href="mailto:api@app.censored-link.com?subject=Free%20Data%20Sample%20Request" class="btn-yellow">Request free sample &nbsp;→</a>
+      <a href="mailto:api@app.censored-link.com" class="btn-ghost">Email us directly</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div class="footer-logo">APP</div>
+    <span class="logo-tag">Data API</span>
+  </div>
+  <div class="footer-links">
+    <a href="/docs.html">API Docs</a>
+    <a href="/status.html">Status</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/dpa.html">DPA (GDPR)</a>
+    <a href="/terms.html">Terms</a>
+    <a href="https://app.censored-link.com">Consumer app</a>
+  </div>
+  <div class="footer-copy">© 2025 App</div>
+</footer>
+
+</body>
+</html>

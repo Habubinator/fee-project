@@ -1,0 +1,102 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Build project
+        run: |
+          npm run build
+          # Copy any JSON assets from src/ that tsc doesn't emit
+          find src -name "*.json" 2>/dev/null | while read -r f; do
+            dest="dist/${f#src/}"
+            mkdir -p "$(dirname "$dest")"
+            cp "$f" "$dest"
+          done
+
+      - name: Setup SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Sync files to server
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          rsync -avz --delete \
+            --exclude='.env' \
+            --exclude='firebase-credentials.json' \
+            --exclude='node_modules/' \
+            dist/ \
+            static/ \
+            nginx/ \
+            prisma/ \
+            data/ \
+            package.json \
+            package-lock.json \
+            ecosystem.config.js \
+            docker-compose.yml \
+            "$SSH_USER@$SSH_HOST:/var/www/app/"
+
+      - name: Install deps, sync Docker services, migrate, reload app
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          ssh "$SSH_USER@$SSH_HOST" bash <<'ENDSSH'
+            set -e
+
+            DEPLOY_DIR="/var/www/app"
+
+            # Load Node.js (fnm) — hard-fail if Node isn't found so we never
+            # silently deploy with the wrong version or fall back to system Node
+            export PATH="/root/.local/share/fnm:$PATH"
+            eval "$(fnm env --use-on-cd 2>/dev/null)" || export PATH="/usr/local/bin:$PATH"
+            node --version   # fails loudly if Node is missing
+
+            echo "==> Ensuring Docker services are up-to-date..."
+            docker compose -f "${DEPLOY_DIR}/docker-compose.yml" \
+              --env-file "${DEPLOY_DIR}/.env" \
+              up -d --wait --remove-orphans --pull missing
+
+            echo "==> Installing production Node.js dependencies..."
+            npm --prefix "${DEPLOY_DIR}" ci --omit=dev
+
+            echo "==> Installing Playwright Chromium..."
+            (cd "${DEPLOY_DIR}" && npx playwright install --with-deps chromium)
+
+            echo "==> Running database migrations..."
+            (cd "${DEPLOY_DIR}" && npx prisma migrate deploy)
+
+            echo "==> Reloading application..."
+            pm2 reload "${DEPLOY_DIR}/ecosystem.config.js" --env production \
+              || pm2 start "${DEPLOY_DIR}/ecosystem.config.js" --env production
+
+            pm2 save
+          ENDSSH

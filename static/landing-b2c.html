@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App — Know before you're charged</title>
+<meta name="description" content="App finds your forgotten subscriptions, catches price hikes, and shows you exactly how to cancel.">
+<meta property="og:title" content="App — Know before you're charged">
+<meta property="og:description" content="App finds your forgotten subscriptions, catches price hikes, and shows you exactly how to cancel.">
+<meta property="og:url" content="https://app.censored-link.com">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="App">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="App — Know before you're charged">
+<meta name="twitter:description" content="App finds your forgotten subscriptions, catches price hikes, and shows you exactly how to cancel.">
+<link rel="canonical" href="https://app.censored-link.com">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:   #f7f3ed;
+    --cream:   #ede8df;
+    --cream2:  #e4ddd2;
+    --yellow:  #F5A623;
+    --yellow-dark: #e09318;
+    --yellow-dim:  rgba(245,166,35,0.12);
+    --yellow-border: rgba(245,166,35,0.35);
+    --peach:   #F5C5B0;
+    --ink:     #0d0c0a;
+    --muted:   rgba(13,12,10,0.42);
+    --muted2:  rgba(13,12,10,0.62);
+    --border:  rgba(13,12,10,0.1);
+    --border2: rgba(13,12,10,0.06);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', sans-serif; background: var(--paper); color: var(--ink); overflow-x: hidden; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 3rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(247,243,237,0.9); backdrop-filter: blur(16px);
+  }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.65rem; letter-spacing: 0.06em; color: var(--yellow); text-decoration: none; }
+  .nav-r { display: flex; align-items: center; gap: 2rem; }
+  .nav-r a { font-size: 0.83rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .nav-r a:hover { color: var(--ink); }
+  .nav-cta { background: transparent; border: 1px solid var(--yellow); color: var(--yellow); font-size: 0.83rem; font-weight: 500; padding: 0.5rem 1.2rem; border-radius: 4px; text-decoration: none; transition: background 0.2s, color 0.2s; }
+  .nav-cta:hover { background: var(--yellow); color: var(--black); }
+
+  .hero {
+    min-height: 100vh; padding: 8rem 3rem 5rem;
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative; overflow: hidden; border-bottom: 1px solid var(--border);
+  }
+  .hero::before {
+    content: '';
+    position: absolute; width: 800px; height: 800px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(245,166,35,0.14) 0%, rgba(245,166,35,0.04) 50%, transparent 72%);
+    top: 50%; right: -5%; transform: translateY(-50%);
+    pointer-events: none; animation: glow 9s ease-in-out infinite;
+  }
+  .hero::after {
+    content: 'APP';
+    position: absolute; bottom: -2.5rem; right: -1rem;
+    font-family: 'Bebas Neue', sans-serif; font-size: 16vw; color: rgba(245,166,35,0.07);
+    line-height: 1; letter-spacing: 0.04em; pointer-events: none; white-space: nowrap; user-select: none;
+  }
+  @keyframes glow { 0%,100%{transform:translateY(-50%) scale(1);opacity:1} 50%{transform:translateY(-50%) scale(1.1);opacity:0.6} }
+
+  .hero-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+  .hero-meta { display: flex; align-items: center; gap: 2rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+  .live-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--yellow-dim); border: 1px solid var(--yellow-border);
+    color: var(--yellow-dark); font-size: 0.75rem; font-weight: 500;
+    padding: 0.3rem 0.85rem; border-radius: 100px; letter-spacing: 0.05em;
+  }
+  .live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--yellow); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  .hero-meta-stat { font-size: 0.78rem; color: var(--muted); }
+  .hero-meta-stat strong { color: var(--ink); }
+
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(5rem,10vw,11rem); line-height: 0.88; letter-spacing: 0.03em; color: var(--ink); margin-bottom: 2.5rem; }
+  h1 em { color: var(--yellow); font-style: normal; }
+  h1 .outline { -webkit-text-stroke: 2px rgba(13,12,10,0.18); color: transparent; }
+
+  .hero-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: end; }
+  .hero-sub { font-size: 1rem; color: var(--muted2); line-height: 1.7; font-weight: 300; max-width: 400px; }
+  .hero-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; }
+  .btn-primary {
+    background: var(--ink); color: var(--peach); font-size: 0.95rem; font-weight: 600;
+    padding: 0.9rem 2.25rem; border-radius: 4px; text-decoration: none; display: inline-block;
+    box-shadow: 4px 4px 0 rgba(13,12,10,0.15);
+    transition: background 0.2s, transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-primary:hover { background: var(--yellow); color: var(--ink); transform: translate(-2px,-2px); box-shadow: 6px 6px 0 rgba(13,12,10,0.15); }
+  .hero-note { font-size: 0.75rem; color: var(--muted); text-align: right; }
+
+  .ticker { background: var(--ink); padding: 0.85rem 0; overflow: hidden; white-space: nowrap; }
+  .ticker-track { display: inline-flex; animation: ticker 28s linear infinite; }
+  .ticker-track:hover { animation-play-state: paused; }
+  .ticker-item { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.1em; color: var(--peach); padding: 0 2.5rem; }
+  .ticker-sep { color: var(--yellow); opacity: 0.55; }
+  @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+  .stat-row { display: grid; grid-template-columns: repeat(4,1fr); border-bottom: 1px solid var(--border); background: var(--cream); }
+  .stat-cell {
+    padding: 2.25rem 2.5rem; border-right: 1px solid var(--border);
+    position: relative; overflow: hidden; transition: background 0.2s;
+  }
+  .stat-cell::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--yellow); transform:scaleX(0); transform-origin:left; transition:transform 0.3s ease; }
+  .stat-cell:hover::after { transform:scaleX(1); }
+  .stat-cell:last-child { border-right: none; }
+  .stat-cell:hover { background: var(--cream2); }
+  .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: var(--yellow-dark); letter-spacing: 0.04em; line-height: 1; }
+  .stat-lbl { font-size: 0.78rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.45; }
+
+  .problems-section { display: grid; grid-template-columns: repeat(3,1fr); border-bottom: 1px solid var(--border); }
+  .prob-cell { padding: 3.5rem 2.5rem; border-right: 1px solid var(--border); position: relative; overflow: hidden; transition: background 0.25s; }
+  .prob-cell:last-child { border-right: none; }
+  .prob-cell:hover { background: var(--cream); }
+  .prob-num { font-family: 'Bebas Neue', sans-serif; font-size: 7rem; color: rgba(245,166,35,0.1); position: absolute; top: 0.5rem; right: 1rem; line-height: 1; pointer-events: none; transition: color 0.25s; }
+  .prob-cell:hover .prob-num { color: rgba(245,166,35,0.2); }
+  .icon-box { width: 38px; height: 38px; border: 1.5px solid var(--border); border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; transition: border-color 0.2s, background 0.2s; }
+  .prob-cell:hover .icon-box { border-color: var(--yellow); background: var(--yellow-dim); }
+  .prob-title { font-weight: 600; font-size: 1rem; margin-bottom: 0.6rem; }
+  .prob-body { font-size: 0.83rem; color: var(--muted); line-height: 1.7; }
+  .prob-tag { display: inline-block; margin-top: 1.25rem; border: 1px solid var(--border); font-size: 0.68rem; color: var(--muted); padding: 0.25rem 0.65rem; border-radius: 2px; letter-spacing: 0.08em; font-weight: 500; transition: border-color 0.2s, color 0.2s; }
+  .prob-cell:hover .prob-tag { border-color: var(--yellow-border); color: var(--yellow-dark); }
+
+  .features-section { padding: 6rem 3rem; max-width: 1100px; margin: 0 auto; }
+  .sec-label { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--yellow-dark); margin-bottom: 0.75rem; opacity: 0.8; }
+  .sec-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem,5vw,4.5rem); line-height: 0.9; letter-spacing: 0.03em; margin-bottom: 1rem; }
+  .sec-sub { font-size: 0.9rem; color: var(--muted2); line-height: 1.65; max-width: 480px; font-weight: 300; }
+
+  .feat-list { display: flex; flex-direction: column; margin-top: 3rem; }
+  .feat-row { display: grid; grid-template-columns: 60px 1fr 1fr; gap: 2rem; align-items: start; padding: 2rem 1rem; border-bottom: 1px solid var(--border); border-radius: 6px; transition: background 0.2s, padding-left 0.2s, border-color 0.2s; cursor: default; }
+  .feat-row:hover { background: var(--cream); padding-left: 1.5rem; border-color: rgba(245,166,35,0.3); }
+  .feat-idx { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: rgba(13,12,10,0.1); letter-spacing: 0.04em; line-height: 1; transition: color 0.2s; }
+  .feat-row:hover .feat-idx { color: var(--yellow); }
+  .feat-left-title { font-weight: 600; font-size: 1rem; margin-bottom: 0.35rem; }
+  .feat-left-sub { font-size: 0.72rem; color: var(--yellow-dark); letter-spacing: 0.07em; text-transform: uppercase; opacity: 0.75; }
+  .feat-right { font-size: 0.85rem; color: var(--muted); line-height: 1.7; font-weight: 300; }
+
+  .notif-section {
+    padding: 6rem 3rem; background: var(--cream);
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .notif-section::before {
+    content: 'ALERTS';
+    position: absolute; right: -1rem; top: 50%; transform: translateY(-50%);
+    font-family: 'Bebas Neue', sans-serif; font-size: 18vw; color: rgba(245,166,35,0.07);
+    line-height: 1; pointer-events: none; white-space: nowrap; letter-spacing: 0.04em;
+  }
+  .notif-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; position: relative; z-index: 1; }
+  .notif-wall { display: flex; flex-direction: column; gap: 0.7rem; }
+  .notif-item { background: var(--paper); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem 1.25rem; display: flex; align-items: flex-start; gap: 1rem; box-shadow: 0 2px 8px rgba(13,12,10,0.04); transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; }
+  .notif-item:hover { border-color: rgba(245,166,35,0.4); transform: translateX(5px); box-shadow: 0 4px 20px rgba(13,12,10,0.08); }
+  .notif-item.hot  { border-left: 2px solid #c0392b; }
+  .notif-item.warm { border-left: 2px solid var(--yellow); }
+  .notif-item.cool { border-left: 2px solid #2e7d52; }
+  .ni-title { font-size: 0.875rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .ni-body  { font-size: 0.77rem; color: var(--muted); line-height: 1.5; }
+  .ni-time  { font-size: 0.68rem; color: var(--muted); margin-top: 0.3rem; opacity: 0.55; }
+
+  .switch-section { padding: 6rem 3rem; max-width: 1100px; margin: 0 auto; position: relative; }
+  .switch-section::after { content: 'SAVE'; position: absolute; left: 0; bottom: 0; font-family: 'Bebas Neue', sans-serif; font-size: 16vw; color: rgba(245,166,35,0.06); line-height: 1; pointer-events: none; letter-spacing: 0.04em; z-index: 0; }
+  .switch-section > * { position: relative; z-index: 1; }
+  .switch-table { margin-top: 2.5rem; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .switch-header { display: grid; grid-template-columns: 1fr 110px 1fr 130px; gap: 1rem; padding: 0.85rem 1.5rem; background: var(--cream); border-bottom: 1px solid var(--border); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .switch-row-item { display: grid; grid-template-columns: 1fr 110px 1fr 130px; gap: 1rem; padding: 1.35rem 1.5rem; align-items: center; border-bottom: 1px solid var(--border2); transition: background 0.15s; }
+  .switch-row-item:last-child { border-bottom: none; }
+  .switch-row-item:hover { background: var(--cream); }
+  .svc { display: flex; align-items: center; gap: 0.75rem; }
+  .svc-n { font-size: 0.875rem; font-weight: 500; }
+  .svc-p { font-size: 0.72rem; color: var(--muted); }
+  .curr-price { font-size: 0.9rem; font-weight: 600; color: #c0392b; }
+  .alt-price  { font-size: 0.9rem; font-weight: 600; color: #2e7d52; }
+  .save-badge { background: rgba(46,125,82,0.08); color: #2e7d52; border: 1px solid rgba(46,125,82,0.2); font-size: 0.72rem; font-weight: 500; padding: 0.3rem 0.65rem; border-radius: 4px; display: inline-block; }
+
+  .pricing-section { padding: 6rem 3rem; text-align: center; background: var(--ink); position: relative; overflow: hidden; }
+  .pricing-section::before { content: '$12'; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); font-family: 'Bebas Neue', sans-serif; font-size: 32vw; color: rgba(245,166,35,0.05); line-height: 1; pointer-events: none; letter-spacing: -0.02em; white-space: nowrap; }
+  .pricing-inner { max-width: 580px; margin: 0 auto; position: relative; z-index: 1; }
+  .pricing-section .sec-label { color: var(--yellow); opacity: 1; }
+  .pricing-section .sec-title { color: var(--paper); }
+  .pricing-section .sec-sub { color: rgba(247,243,237,0.45); margin: 0.75rem auto 0; max-width: 400px; }
+
+  .price-block { margin-top: 3rem; border: 1px solid rgba(245,166,35,0.25); border-radius: 12px; overflow: hidden; }
+  .price-block-top { background: var(--yellow); color: var(--ink); padding: 3rem 2.5rem 2rem; position: relative; overflow: hidden; }
+  .price-block-top::after { content: 'FEE'; position: absolute; right: -0.5rem; bottom: -1.5rem; font-family: 'Bebas Neue', sans-serif; font-size: 7rem; color: rgba(13,12,10,0.07); line-height: 1; pointer-events: none; letter-spacing: 0.04em; }
+  .price-label { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.55; margin-bottom: 0.75rem; }
+  .price-big { font-family: 'Bebas Neue', sans-serif; font-size: 7rem; line-height: 1; letter-spacing: 0.02em; position: relative; z-index: 1; }
+  .price-sub-text { font-size: 0.85rem; opacity: 0.5; margin-top: 0.25rem; }
+  .price-block-feats { padding: 2rem 2.5rem; background: rgba(247,243,237,0.03); display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; text-align: left; border-bottom: 1px solid rgba(247,243,237,0.07); }
+  .pf { font-size: 0.83rem; color: rgba(247,243,237,0.6); display: flex; align-items: center; gap: 0.4rem; }
+  .pf::before { content: '→'; color: var(--yellow); font-weight: 500; }
+  .price-block-cta { padding: 2rem 2.5rem; background: rgba(247,243,237,0.03); }
+  .btn-get { background: var(--yellow); color: var(--ink); font-size: 0.95rem; font-weight: 600; padding: 0.9rem 2.5rem; border-radius: 6px; text-decoration: none; display: inline-block; width: 100%; text-align: center; transition: background 0.2s, box-shadow 0.2s; }
+  .btn-get:hover { background: #ffb835; box-shadow: 0 6px 28px rgba(245,166,35,0.35); }
+  .price-fine { font-size: 0.75rem; color: rgba(247,243,237,0.25); margin-top: 0.85rem; }
+
+  footer { background: var(--ink); border-top: 1px solid rgba(247,243,237,0.06); padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+  .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--yellow); letter-spacing: 0.06em; }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { font-size: 0.78rem; color: rgba(247,243,237,0.3); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: rgba(247,243,237,0.7); }
+  .footer-copy { font-size: 0.72rem; color: rgba(247,243,237,0.18); }
+
+  /* TABLET */
+  @media(max-width:900px){
+    .stat-row{grid-template-columns:1fr 1fr}
+    .stat-cell{border-bottom:1px solid var(--border)}
+    .problems-section{grid-template-columns:1fr}
+    .prob-cell{border-right:none;border-bottom:1px solid var(--border)}
+    .hero-bottom{grid-template-columns:1fr;gap:2.5rem}
+    .hero-actions{align-items:flex-start}
+    .hero-note{text-align:left}
+    .notif-inner{grid-template-columns:1fr;gap:3rem}
+    .feat-row{grid-template-columns:44px 1fr}
+    .feat-right{grid-column:2}
+  }
+
+  /* PHONE */
+  @media(max-width:520px){
+    nav{padding:0.9rem 1.25rem}
+    .nav-r a:not(.nav-cta){display:none}
+    .nav-cta{font-size:0.78rem;padding:0.45rem 0.9rem}
+    .hero{padding:5.5rem 1.25rem 3rem}
+    .hero::after{font-size:28vw;bottom:-1rem;right:-0.5rem}
+    .hero::before{width:320px;height:320px;left:50%;top:40%}
+    .hero-meta{gap:0.75rem;margin-bottom:1.5rem}
+    .live-badge{font-size:0.68rem;padding:0.25rem 0.7rem}
+    .hero-meta-stat{font-size:0.72rem}
+    h1{font-size:clamp(3.2rem,16vw,4.5rem);margin-bottom:1.75rem}
+    .hero-sub{font-size:0.9rem}
+    .btn-yellow{width:100%;text-align:center;padding:0.9rem 1.5rem;font-size:0.9rem}
+    .hero-note{font-size:0.7rem}
+    .ticker{padding:0.7rem 0}
+    .ticker-item{font-size:0.85rem;padding:0 1.5rem}
+    .stat-row{grid-template-columns:1fr 1fr}
+    .stat-cell{padding:1.4rem 1.25rem}
+    .stat-val{font-size:2.2rem}
+    .stat-lbl{font-size:0.72rem}
+    .prob-cell{padding:2.25rem 1.25rem}
+    .prob-num{font-size:5rem}
+    .prob-title{font-size:0.95rem}
+    .prob-body{font-size:0.82rem}
+    .features-section{padding:3.5rem 1.25rem}
+    .sec-title{font-size:clamp(2rem,11vw,3rem)}
+    .feat-list{margin-top:2rem}
+    .feat-row{grid-template-columns:36px 1fr;gap:1rem;padding:1.5rem 0.75rem}
+    .feat-idx{font-size:1.8rem}
+    .feat-left-title{font-size:0.9rem}
+    .feat-left-sub{font-size:0.68rem}
+    .feat-right{grid-column:1/-1;font-size:0.82rem;padding-top:0.25rem}
+    .notif-section{padding:3.5rem 1.25rem}
+    .notif-section::before{font-size:30vw;right:-0.5rem}
+    .notif-wall{gap:0.6rem}
+    .notif-item{padding:0.9rem 1rem;gap:0.75rem}
+    .ni-title{font-size:0.82rem}
+    .ni-body{font-size:0.74rem}
+    .switch-section{padding:3.5rem 1.25rem}
+    .switch-section::after{font-size:28vw}
+    .switch-header{display:none}
+    .switch-table{border-radius:8px}
+    .switch-row-item{display:flex;flex-direction:column;gap:0.5rem;padding:1.1rem 1rem}
+    .svc-n{font-size:0.82rem}
+    .svc-p{font-size:0.68rem}
+    .curr-price{font-size:0.85rem}
+    .alt-price{font-size:0.85rem}
+    .save-badge{font-size:0.68rem;padding:0.2rem 0.5rem}
+    .pricing-section{padding:3.5rem 1.25rem}
+    .pricing-section::before{font-size:45vw}
+    .price-block-top{padding:2rem 1.5rem 1.5rem}
+    .price-big{font-size:5.5rem}
+    .price-label{font-size:0.72rem}
+    .price-sub-text{font-size:0.78rem}
+    .price-block-feats{grid-template-columns:1fr;padding:1.5rem;gap:0.5rem}
+    .price-block-cta{padding:1.5rem}
+    .btn-get{font-size:0.9rem;padding:0.85rem}
+    .price-fine{font-size:0.72rem}
+    footer{flex-direction:column;align-items:flex-start;gap:1.25rem;padding:1.75rem 1.25rem}
+    .footer-links{flex-wrap:wrap;gap:1rem}
+    .footer-links a{font-size:0.75rem}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="https://app.censored-link.com">APP</a>
+  <div class="nav-r">
+    <a href="#features">Features</a>
+    <a href="#switch">Switch &amp; Save</a>
+    <a href="#pricing">Pricing</a>
+    <a href="/login" class="nav-cta">Start free</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-meta">
+      <div class="live-badge"><div class="live-dot"></div> Live &nbsp;·&nbsp; 500+ services tracked</div>
+      <div class="hero-meta-stat">Avg user saves <strong>$218/year</strong></div>
+      <div class="hero-meta-stat">Free for <strong>14 days</strong></div>
+    </div>
+    <h1>KNOW<br><em>BEFORE</em><br><span class="outline">YOU PAY</span></h1>
+    <div class="hero-bottom">
+      <p class="hero-sub">App detects every subscription hiding in your inbox, fires alerts before trials charge and prices rise, and gives you the exact steps to cancel — before a single extra dollar leaves your account.</p>
+      <div class="hero-actions">
+        <a href="/login" class="btn-primary">Start free trial &nbsp;→</a>
+        <div class="hero-note">14 days free &nbsp;·&nbsp; $12/year after &nbsp;·&nbsp; cancel any time</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item">Trial ending alert</span><span class="ticker-item ticker-sep">&nbsp;/&nbsp;</span>
+    <span class="ticker-item">Price hike detected</span><span class="ticker-item ticker-sep">&nbsp;/&nbsp;</span>
+    <span class="ticker-item">Cancel guide ready</span><span class="ticker-item ticker-sep">&nbsp;/&nbsp;</span>
+    <span class="ticker-item">Switch &amp; Save</span><span class="ticker-item ticker-sep">&nbsp;/&nbsp;</span>
+    <span class="ticker-item">Unused subscription</span><span class="ticker-item ticker-sep">&nbsp;/&nbsp;</span>
+    <span class="ticker-item">New charge detected</span><span class="ticker-item ticker-sep">&nbsp;/&nbsp;</span>
+    <span class="ticker-item">Dark pattern warning</span><span class="ticker-item ticker-sep">&nbsp;/&nbsp;</span>
+    <span class="ticker-item">Trial ending alert</span><span class="ticker-item ticker-sep">&nbsp;/&nbsp;</span>
+    <span class="ticker-item">Price hike detected</span><span class="ticker-item ticker-sep">&nbsp;/&nbsp;</span>
+    <span class="ticker-item">Cancel guide ready</span><span class="ticker-item ticker-sep">&nbsp;/&nbsp;</span>
+    <span class="ticker-item">Switch &amp; Save</span><span class="ticker-item ticker-sep">&nbsp;/&nbsp;</span>
+    <span class="ticker-item">Unused subscription</span><span class="ticker-item ticker-sep">&nbsp;/&nbsp;</span>
+    <span class="ticker-item">New charge detected</span><span class="ticker-item ticker-sep">&nbsp;/&nbsp;</span>
+    <span class="ticker-item">Dark pattern warning</span><span class="ticker-item ticker-sep">&nbsp;/&nbsp;</span>
+  </div>
+</div>
+
+<div class="stat-row">
+  <div class="stat-cell"><div class="stat-val">89%</div><div class="stat-lbl">underestimate subscription spend by 2.5x</div></div>
+  <div class="stat-cell"><div class="stat-val">$218</div><div class="stat-lbl">average yearly savings per user</div></div>
+  <div class="stat-cell"><div class="stat-val">500+</div><div class="stat-lbl">services tracked with cancel and pricing data</div></div>
+  <div class="stat-cell"><div class="stat-val">$1</div><div class="stat-lbl">per month effectively — one payment, one year</div></div>
+</div>
+
+<section class="problems-section">
+  <div class="prob-cell">
+    <div class="prob-num">01</div>
+    <div class="icon-box"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.3"/><line x1="8" y1="4" x2="8" y2="12" stroke="currentColor" stroke-width="1.3"/><line x1="4" y1="8" x2="12" y2="8" stroke="currentColor" stroke-width="1.3"/></svg></div>
+    <div class="prob-title">The trial trap</div>
+    <div class="prob-body">Free trial, card required, converts to paid automatically. You forgot. That was 4 months ago. We alert you at T-7 and T-3 before any trial charges.</div>
+    <div class="prob-tag">TRIAL ALERTS</div>
+  </div>
+  <div class="prob-cell">
+    <div class="prob-num">02</div>
+    <div class="icon-box"><svg width="16" height="16" viewBox="0 0 16 16"><polyline points="2,12 6,7 9,9 14,3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><polyline points="11,3 14,3 14,6" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+    <div class="prob-title">The silent hike</div>
+    <div class="prob-body">One email. Buried in promotions. Price raised $4/month. They are counting on you not noticing. We push an alert the second any pricing page changes.</div>
+    <div class="prob-tag">PRICE MONITORING</div>
+  </div>
+  <div class="prob-cell">
+    <div class="prob-num">03</div>
+    <div class="icon-box"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="1" fill="currentColor"/></svg></div>
+    <div class="prob-title">The roach motel</div>
+    <div class="prob-body">Easy to get in. Intentionally hard to leave. 6 screens, a guilt trip, a fake pause offer. We score cancel difficulty and give you the exact escape steps.</div>
+    <div class="prob-tag">CANCEL GUIDES</div>
+  </div>
+</section>
+
+<section class="features-section" id="features">
+  <div class="sec-label">// What we do</div>
+  <h2 class="sec-title">Every feature is<br>a dollar saved</h2>
+  <div class="feat-list">
+    <div class="feat-row">
+      <div class="feat-idx">01</div>
+      <div><div class="feat-left-title">Email-based detection</div><div class="feat-left-sub">Gmail · Outlook · Read-only</div></div>
+      <div class="feat-right">We scan only billing emails — never personal conversations. You see the exact Gmail scope we request before confirming. No bank connection required to get started.</div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-idx">02</div>
+      <div><div class="feat-left-title">Trial and renewal alerts</div><div class="feat-left-sub">iOS · Android · Firebase</div></div>
+      <div class="feat-right">Push notifications 7 and 3 days before any trial converts to paid. Renewal reminders for every active subscription. Configurable lead times — you decide how early.</div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-idx">03</div>
+      <div><div class="feat-left-title">Price hike monitoring</div><div class="feat-left-sub">500+ services · Daily refresh</div></div>
+      <div class="feat-right">We continuously monitor pricing pages across 500+ subscription services. The moment a price changes, you are notified — with full before/after history and days until your next charge.</div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-idx">04</div>
+      <div><div class="feat-left-title">AI cancel guides</div><div class="feat-left-sub">GPT-4o · Cached · Always fresh</div></div>
+      <div class="feat-right">AI-generated step-by-step instructions for cancelling every service we track. Direct deep links to the right screen — web, iOS App Store, Google Play. No hunting.</div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-idx">05</div>
+      <div><div class="feat-left-title">Switch and Save</div><div class="feat-left-sub">Competitor pricing · Live data</div></div>
+      <div class="feat-right">When a competitor offers equivalent value cheaper, we surface it. Including one-time purchase alternatives to expensive recurring software. Your choice — we just make sure you have the information.</div>
+    </div>
+  </div>
+</section>
+
+<section class="notif-section">
+  <div class="notif-inner">
+    <div>
+      <div class="sec-label">// Notifications</div>
+      <h2 class="sec-title">Six alerts.<br>All signal.<br>No noise.</h2>
+      <p class="sec-sub" style="margin-top:1rem">Push notifications on iOS and Android. Every alert is actionable — tap to open the cancel guide, view the price history, or see the cheaper alternative.</p>
+    </div>
+    <div class="notif-wall">
+      <div class="notif-item hot">
+        <div style="width:30px;height:30px;border-radius:5px;background:rgba(192,57,43,0.1);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#c0392b;flex-shrink:0;font-family:serif">!</div>
+        <div><div class="ni-title">Trial ends in 3 days</div><div class="ni-body">Notion charges $16.00 on Nov 15. Tap to open cancel guide.</div><div class="ni-time">Now · App</div></div>
+      </div>
+      <div class="notif-item warm">
+        <div style="width:30px;height:30px;border-radius:5px;background:rgba(245,166,35,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="13" height="13" viewBox="0 0 13 13"><polyline points="1,10 5,5 8,7 12,2" fill="none" stroke="#e09318" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+        <div><div class="ni-title">Adobe raised prices</div><div class="ni-body">Creative Cloud $54.99 to $59.99/mo. 8 days until your next charge.</div><div class="ni-time">2 hours ago</div></div>
+      </div>
+      <div class="notif-item warm">
+        <div style="width:30px;height:30px;border-radius:5px;background:rgba(245,166,35,0.1);display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:700;color:#e09318;flex-shrink:0">ZZZ</div>
+        <div><div class="ni-title">Unused for 41 days</div><div class="ni-body">Audible is $14.95/mo. No emails detected in 41 days. Still using it?</div><div class="ni-time">Yesterday</div></div>
+      </div>
+      <div class="notif-item cool">
+        <div style="width:30px;height:30px;border-radius:5px;background:rgba(46,125,82,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="13" height="13" viewBox="0 0 13 13"><circle cx="6.5" cy="5.5" r="3.5" fill="none" stroke="#2e7d52" stroke-width="1.3"/><line x1="6.5" y1="9" x2="6.5" y2="11" stroke="#2e7d52" stroke-width="1.3"/><line x1="5" y1="11" x2="8" y2="11" stroke="#2e7d52" stroke-width="1.3"/></svg></div>
+        <div><div class="ni-title">Cheaper alternative found</div><div class="ni-body">YouTube Music = same catalog as Spotify for $1/mo less. Save $12/year.</div><div class="ni-time">2 days ago</div></div>
+      </div>
+      <div class="notif-item hot">
+        <div style="width:30px;height:30px;border-radius:5px;background:rgba(192,57,43,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="13" height="13" viewBox="0 0 13 13"><line x1="3" y1="2" x2="3" y2="11" stroke="#c0392b" stroke-width="1.3"/><polyline points="3,2 10,4.5 3,7" fill="rgba(192,57,43,0.12)" stroke="#c0392b" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
+        <div><div class="ni-title">Difficult to cancel — heads up</div><div class="ni-body">Headspace scored 7.4/10 cancel difficulty. 4 known dark patterns.</div><div class="ni-time">3 days ago</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="switch-section" id="switch">
+  <div class="sec-label">// Switch and Save</div>
+  <h2 class="sec-title">You might be<br>overpaying right now</h2>
+  <p class="sec-sub" style="margin-top:0.5rem">We compare your active subscriptions against equivalent alternatives — including one-time purchases that eliminate the recurring fee entirely.</p>
+  <div class="switch-table">
+    <div class="switch-header"><span>Current service</span><span>You pay</span><span>Alternative</span><span>You save</span></div>
+    <div class="switch-row-item">
+      <div class="svc"><span style="width:30px;height:30px;border-radius:4px;background:var(--cream2);display:inline-flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:var(--muted);flex-shrink:0">CC</span><div><div class="svc-n">Adobe CC Photography</div><div class="svc-p">Monthly plan</div></div></div>
+      <div class="curr-price">$19.99/mo</div>
+      <div class="svc"><span style="width:30px;height:30px;border-radius:4px;background:rgba(46,125,82,0.08);display:inline-flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:#2e7d52;flex-shrink:0">AF</span><div><div class="svc-n">Affinity Photo 2</div><div class="svc-p">One-time purchase</div></div></div>
+      <div><div class="alt-price">$69.99 once</div><div class="save-badge" style="margin-top:0.3rem">save $170/yr</div></div>
+    </div>
+    <div class="switch-row-item">
+      <div class="svc"><span style="width:30px;height:30px;border-radius:4px;background:var(--cream2);display:inline-flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:var(--muted);flex-shrink:0">SP</span><div><div class="svc-n">Spotify Individual</div><div class="svc-p">Standard plan</div></div></div>
+      <div class="curr-price">$11.99/mo</div>
+      <div class="svc"><span style="width:30px;height:30px;border-radius:4px;background:rgba(46,125,82,0.08);display:inline-flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:#2e7d52;flex-shrink:0">YT</span><div><div class="svc-n">YouTube Music</div><div class="svc-p">Same catalog</div></div></div>
+      <div><div class="alt-price">$10.99/mo</div><div class="save-badge" style="margin-top:0.3rem">save $12/yr</div></div>
+    </div>
+    <div class="switch-row-item">
+      <div class="svc"><span style="width:30px;height:30px;border-radius:4px;background:var(--cream2);display:inline-flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:var(--muted);flex-shrink:0">DB</span><div><div class="svc-n">Dropbox Plus</div><div class="svc-p">2TB storage</div></div></div>
+      <div class="curr-price">$11.99/mo</div>
+      <div class="svc"><span style="width:30px;height:30px;border-radius:4px;background:rgba(46,125,82,0.08);display:inline-flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:#2e7d52;flex-shrink:0">PC</span><div><div class="svc-n">pCloud Lifetime</div><div class="svc-p">2TB, no recurring</div></div></div>
+      <div><div class="alt-price">$399 once</div><div class="save-badge" style="margin-top:0.3rem">save $1,044/5yr</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing-section" id="pricing">
+  <div class="pricing-inner">
+    <div class="sec-label">// Pricing</div>
+    <h2 class="sec-title">One payment.<br>One year.</h2>
+    <p class="sec-sub">14 days full access, no card required. Then a single $12 payment unlocks everything for the whole year.</p>
+    <div class="price-block">
+      <div class="price-block-top">
+        <div class="price-label">Annual Pass · All features</div>
+        <div class="price-big">$12</div>
+        <div class="price-sub-text">per year · $1/month · one payment</div>
+      </div>
+      <div class="price-block-feats">
+        <div class="pf">Unlimited subscriptions</div><div class="pf">All push notifications</div>
+        <div class="pf">AI cancel guides</div><div class="pf">Price hike alerts</div>
+        <div class="pf">Switch and Save</div><div class="pf">Usage analysis</div>
+        <div class="pf">iOS and Android app</div><div class="pf">Data export</div>
+      </div>
+      <div class="price-block-cta">
+        <a href="/login" class="btn-get">Start 14-day free trial &nbsp;→</a>
+        <div class="price-fine">No credit card required. Cancel easily — obviously. That is kind of our thing.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">APP</div>
+  <div class="footer-links">
+    <a href="/login">Sign in</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+    <a href="mailto:api@app.censored-link.com?subject=Newsletter">Blog</a>
+    <a href="https://data.censored-link.com">Data API</a>
+  </div>
+  <div class="footer-copy">© 2025 App</div>
+</footer>
+
+</body>
+</html>

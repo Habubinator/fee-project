@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Status — App</title>
+<meta name="description" content="App system status — current operational status of all services.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --black: #080808; --text: #f5f0ea; --muted: rgba(245,240,234,0.45); --yellow: #F5A623; --border: rgba(245,166,35,0.1); --green: #00d97e; --green-dim: rgba(0,217,126,0.06); --green-border: rgba(0,217,126,0.2); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Outfit', sans-serif; background: var(--black); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 3rem; border-bottom: 1px solid var(--border); }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--yellow); text-decoration: none; letter-spacing: 0.06em; }
+  .nav-back { font-size: 0.83rem; color: var(--muted); text-decoration: none; }
+  .nav-back:hover { color: var(--text); }
+  main { flex: 1; max-width: 640px; margin: 0 auto; padding: 4rem 2rem 6rem; width: 100%; }
+  .overall { background: var(--green-dim); border: 1px solid var(--green-border); border-radius: 10px; padding: 1.75rem 2rem; margin-bottom: 3rem; display: flex; align-items: center; gap: 1.25rem; }
+  .overall-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--green); flex-shrink: 0; box-shadow: 0 0 10px rgba(0,217,126,0.5); animation: pulse 2.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(0.9)} }
+  .overall-title { font-weight: 600; font-size: 1rem; color: var(--green); }
+  .overall-sub { font-size: 0.82rem; color: var(--muted); margin-top: 0.2rem; }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 0.04em; margin-bottom: 0.35rem; }
+  .subtitle { font-size: 0.83rem; color: var(--muted); margin-bottom: 2.5rem; }
+  .services { display: flex; flex-direction: column; gap: 1px; background: var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 2.5rem; }
+  .svc-row { background: #0f0f0f; padding: 1.1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+  .svc-name { font-size: 0.88rem; font-weight: 500; }
+  .svc-sub { font-size: 0.75rem; color: var(--muted); margin-top: 0.1rem; }
+  .badge { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--green-dim); border: 1px solid var(--green-border); color: var(--green); font-size: 0.72rem; font-weight: 500; padding: 0.25rem 0.65rem; border-radius: 100px; letter-spacing: 0.05em; }
+  .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+  .notice { font-size: 0.82rem; color: var(--muted); text-align: center; }
+  a { color: var(--yellow); }
+  footer { text-align: center; padding: 2rem; font-size: 0.78rem; color: var(--muted); border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="https://app.censored-link.com">APP</a>
+  <a class="nav-back" href="https://app.censored-link.com">← Back to home</a>
+</nav>
+<main>
+  <h1>System Status</h1>
+  <div class="subtitle">Current operational status — updated in real-time</div>
+  <div class="overall">
+    <div class="overall-dot"></div>
+    <div>
+      <div class="overall-title">All systems operational</div>
+      <div class="overall-sub">No incidents or degraded performance reported</div>
+    </div>
+  </div>
+  <div class="services">
+    <div class="svc-row">
+      <div><div class="svc-name">API</div><div class="svc-sub">api.censored-link.com</div></div>
+      <div class="badge"><div class="badge-dot"></div> Operational</div>
+    </div>
+    <div class="svc-row">
+      <div><div class="svc-name">Email detection pipeline</div><div class="svc-sub">Gmail + Outlook processing</div></div>
+      <div class="badge"><div class="badge-dot"></div> Operational</div>
+    </div>
+    <div class="svc-row">
+      <div><div class="svc-name">Price monitoring</div><div class="svc-sub">500+ service scrapers</div></div>
+      <div class="badge"><div class="badge-dot"></div> Operational</div>
+    </div>
+    <div class="svc-row">
+      <div><div class="svc-name">Push notifications</div><div class="svc-sub">Firebase Cloud Messaging</div></div>
+      <div class="badge"><div class="badge-dot"></div> Operational</div>
+    </div>
+    <div class="svc-row">
+      <div><div class="svc-name">Data API</div><div class="svc-sub">data.censored-link.com</div></div>
+      <div class="badge"><div class="badge-dot"></div> Operational</div>
+    </div>
+    <div class="svc-row">
+      <div><div class="svc-name">Webhooks</div><div class="svc-sub">B2B price-change callbacks</div></div>
+      <div class="badge"><div class="badge-dot"></div> Operational</div>
+    </div>
+  </div>
+  <div class="notice">Experiencing an issue? Contact us at <a href="mailto:api@app.censored-link.com">api@app.censored-link.com</a></div>
+</main>
+<footer>© 2025 App &nbsp;·&nbsp; <a href="/privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="/terms.html">Terms</a></footer>
+</body>
+</html>

@@ -1,0 +1,150 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PlanStatus {
+  TRIAL
+  FREE
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIAL
+  UNUSED
+  PRICE_HIKED
+  CANCELLED
+  UNKNOWN
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  email              String    @unique
+  passwordHash       String
+  trialEndsAt        DateTime
+  planStatus         PlanStatus @default(TRIAL)
+
+  gmailAccessToken   String?
+  gmailRefreshToken  String?
+  gmailHistoryId     String?
+
+  outlookAccessToken  String?
+  outlookRefreshToken String?
+
+  fcmToken           String?
+
+  monoCardToken      String?
+  planExpiresAt      DateTime?
+  isAdmin            Boolean   @default(false)
+
+  subscriptions      Subscription[]
+  emailEvents        EmailEvent[]
+  refreshTokens      RefreshToken[]
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Subscription {
+  id              String             @id @default(cuid())
+  userId          String
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  serviceName     String
+  serviceId       String?
+  price           Float?
+  currency        String             @default("USD")
+  renewalDate     DateTime?
+  trialStatus     Boolean            @default(false)
+  trialEndsAt     DateTime?
+  cancelUrl       String?
+  status          SubscriptionStatus @default(ACTIVE)
+
+  gmailMessageId  String?            @unique
+
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([userId])
+  @@index([serviceId])
+}
+
+model EmailEvent {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  gmailMessageId String   @unique
+  subject        String?
+  senderDomain   String?
+  processedAt    DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Service {
+  id         String   @id @default(cuid())
+  name       String
+  slug       String   @unique
+  domain     String?
+  pricingUrl String
+  logoUrl    String?
+
+  priceSnapshots PriceSnapshot[]
+  cancelGuide    CancelGuide?
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([slug])
+}
+
+model PriceSnapshot {
+  id        String   @id @default(cuid())
+  serviceId String
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  plan      String
+  price     Float
+  currency  String   @default("USD")
+  interval  String   @default("month")
+
+  capturedAt DateTime @default(now())
+
+  @@index([serviceId, capturedAt])
+}
+
+model CancelGuide {
+  id               String   @id @default(cuid())
+  serviceId        String   @unique
+  service          Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  steps            Json
+  cancelUrl        String?
+  platform         String
+  difficultyScore  Int
+  darkPatterns     Json
+  estimatedMinutes Int
+  reviewNeeded     Boolean  @default(false)
+
+  generatedAt      DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}

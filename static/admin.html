@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App — Admin</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:         #f7f3ed;
+    --cream:         #ede8df;
+    --cream2:        #e4ddd2;
+    --yellow:        #F5A623;
+    --yellow-dark:   #e09318;
+    --yellow-dim:    rgba(245,166,35,0.12);
+    --yellow-border: rgba(245,166,35,0.35);
+    --ink:           #0d0c0a;
+    --muted:         rgba(13,12,10,0.42);
+    --muted2:        rgba(13,12,10,0.62);
+    --border:        rgba(13,12,10,0.1);
+    --green:         #2e7d52;
+    --green-dim:     rgba(46,125,82,0.1);
+    --green-border:  rgba(46,125,82,0.25);
+    --red:           #c0392b;
+    --red-dim:       rgba(192,57,43,0.08);
+    --red-border:    rgba(192,57,43,0.2);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Outfit', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; display: flex; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px; flex-shrink: 0; min-height: 100vh;
+    background: var(--ink); display: flex; flex-direction: column;
+    padding: 1.75rem 1.25rem; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+  .sidebar-logo {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.06em;
+    color: var(--yellow); text-decoration: none; display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem;
+  }
+  .admin-badge {
+    font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    background: var(--red); color: #fff; padding: 0.15rem 0.5rem; border-radius: 100px;
+  }
+  .sidebar-divider { height: 1px; background: rgba(245,240,234,0.08); margin: 1.25rem 0; }
+  .sidebar-nav { display: flex; flex-direction: column; gap: 0.25rem; flex: 1; }
+  .sidebar-link {
+    display: flex; align-items: center; gap: 0.7rem;
+    padding: 0.6rem 0.85rem; border-radius: 8px;
+    font-size: 0.85rem; color: rgba(245,240,234,0.5);
+    text-decoration: none; cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    background: none; border: none; font-family: 'Outfit', sans-serif; width: 100%; text-align: left;
+  }
+  .sidebar-link:hover { background: rgba(245,240,234,0.06); color: rgba(245,240,234,0.85); }
+  .sidebar-link.active { background: rgba(245,166,35,0.12); color: var(--yellow); }
+  .sidebar-icon { font-size: 1rem; width: 20px; text-align: center; }
+  .sidebar-bottom { margin-top: auto; }
+  .sidebar-back {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.78rem; color: rgba(245,240,234,0.3);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .sidebar-back:hover { color: rgba(245,240,234,0.7); }
+
+  /* ── Main ── */
+  .main-area { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .main-header {
+    padding: 1.25rem 2rem; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(247,243,237,0.92); backdrop-filter: blur(16px);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .main-header h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.04em; }
+  .main-header .header-sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.1rem; }
+  .header-r { display: flex; align-items: center; gap: 0.75rem; }
+  .header-search {
+    padding: 0.45rem 0.9rem; font-family: 'Outfit', sans-serif; font-size: 0.83rem;
+    background: var(--cream); border: 1px solid var(--border); border-radius: 8px;
+    color: var(--ink); outline: none; width: 220px; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .header-search:focus { border-color: var(--yellow); box-shadow: 0 0 0 3px var(--yellow-dim); }
+  .main-content { padding: 2rem; flex: 1; }
+
+  /* Tabs */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── Stat cards ── */
+  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2.5rem; }
+  .stat-card {
+    background: #fff; border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+  }
+  .stat-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem; }
+  .stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.02em; }
+  .stat-value.green  { color: var(--green); }
+  .stat-value.yellow { color: var(--yellow-dark); }
+  .stat-value.red    { color: var(--red); }
+
+  /* Recent users list in overview */
+  .recent-section h3 { font-size: 0.85rem; font-weight: 600; color: var(--muted2); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; }
+  .recent-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .recent-item {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 0.75rem 1rem; background: #fff; border: 1px solid var(--border); border-radius: 10px;
+  }
+  .recent-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--cream2); display: flex; align-items: center; justify-content: center;
+    font-size: 0.78rem; font-weight: 600; color: var(--muted2); flex-shrink: 0;
+  }
+  .recent-email { font-size: 0.85rem; flex: 1; }
+  .recent-meta  { font-size: 0.72rem; color: var(--muted); }
+
+  /* ── Table ── */
+  .table-wrap { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: var(--cream); }
+  th { padding: 0.75rem 1rem; text-align: left; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted2); border-bottom: 1px solid var(--border); }
+  td { padding: 0.85rem 1rem; font-size: 0.83rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--paper); }
+
+  /* Plan status select */
+  .plan-select {
+    font-family: 'Outfit', sans-serif; font-size: 0.78rem; font-weight: 500;
+    padding: 0.3rem 0.6rem; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--cream); color: var(--ink); cursor: pointer; outline: none;
+    transition: border-color 0.2s;
+  }
+  .plan-select:focus { border-color: var(--yellow); }
+  .plan-select.saving { opacity: 0.5; pointer-events: none; }
+
+  /* Status pills (read-only) */
+  .pill { display: inline-block; font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.2rem 0.6rem; border-radius: 100px; }
+  .pill-ACTIVE    { background: var(--green-dim);  color: var(--green);  border: 1px solid var(--green-border); }
+  .pill-TRIAL     { background: var(--yellow-dim); color: var(--yellow-dark); border: 1px solid var(--yellow-border); }
+  .pill-FREE      { background: var(--cream2);     color: var(--muted2); border: 1px solid var(--border); }
+  .pill-EXPIRED, .pill-CANCELLED { background: var(--red-dim); color: var(--red); border: 1px solid var(--red-border); }
+
+  /* Delete button */
+  .btn-del {
+    font-size: 0.75rem; color: var(--red); background: var(--red-dim);
+    border: 1px solid var(--red-border); border-radius: 6px;
+    padding: 0.3rem 0.7rem; cursor: pointer; font-family: 'Outfit', sans-serif;
+    transition: background 0.2s;
+  }
+  .btn-del:hover { background: rgba(192,57,43,0.15); }
+
+  /* ── Pagination ── */
+  .pagination { display: flex; align-items: center; justify-content: space-between; margin-top: 1.25rem; }
+  .pagination-info { font-size: 0.78rem; color: var(--muted); }
+  .pagination-btns { display: flex; gap: 0.5rem; }
+  .page-btn {
+    font-family: 'Outfit', sans-serif; font-size: 0.78rem;
+    padding: 0.35rem 0.85rem; border-radius: 6px;
+    border: 1px solid var(--border); background: #fff; cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .page-btn:hover:not(:disabled) { border-color: var(--yellow); }
+  .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+    background: var(--ink); color: var(--paper); font-size: 0.83rem;
+    padding: 0.7rem 1.25rem; border-radius: 8px;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* Loading */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loader { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--yellow); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 3rem auto; }
+
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .main-content { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <a href="/" class="sidebar-logo">APP <span class="admin-badge">Admin</span></a>
+  <div class="sidebar-divider"></div>
+  <nav class="sidebar-nav">
+    <button class="sidebar-link active" data-panel="overview"><span class="sidebar-icon">◎</span> Overview</button>
+    <button class="sidebar-link" data-panel="users"><span class="sidebar-icon">👤</span> Users</button>
+    <button class="sidebar-link" data-panel="subscriptions"><span class="sidebar-icon">📋</span> Subscriptions</button>
+    <button class="sidebar-link" data-panel="events"><span class="sidebar-icon">✉️</span> Email Events</button>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="sidebar-divider"></div>
+    <a href="/dashboard" class="sidebar-back">← Back to Dashboard</a>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main-area">
+  <div class="main-header">
+    <div>
+      <h2 id="panel-title">Overview</h2>
+      <div class="header-sub" id="panel-sub">Platform stats</div>
+    </div>
+    <div class="header-r">
+      <input type="search" class="header-search" id="user-search" placeholder="Search users…" style="display:none">
+    </div>
+  </div>
+
+  <div class="main-content">
+
+    <!-- Overview panel -->
+    <div class="tab-panel active" id="panel-overview">
+      <div class="stat-grid" id="stat-grid"><div class="loader"></div></div>
+      <div class="recent-section">
+        <h3>Recent users</h3>
+        <div class="recent-list" id="recent-list"><div class="loader"></div></div>
+      </div>
+    </div>
+
+    <!-- Users panel -->
+    <div class="tab-panel" id="panel-users">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Plan</th>
+              <th>Trial ends</th>
+              <th>Subs</th>
+              <th>Joined</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-tbody"><tr><td colspan="6"><div class="loader"></div></td></tr></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="users-pagination" style="display:none">
+        <span class="pagination-info" id="users-pag-info"></span>
+        <div class="pagination-btns">
+          <button class="page-btn" id="users-prev">← Prev</button>
+          <button class="page-btn" id="users-next">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subscriptions panel -->
+    <div class="tab-panel" id="panel-subscriptions">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>User</th><th>Service</th><th>Price</th><th>Renewal</th><th>Status</th><th>Detected</th></tr>
+          </thead>
+          <tbody id="subs-tbody"><tr><td colspan="6"><div class="loader"></div></td></tr></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="subs-pagination" style="display:none">
+        <span class="pagination-info" id="subs-pag-info"></span>
+        <div class="pagination-btns">
+          <button class="page-btn" id="subs-prev">← Prev</button>
+          <button class="page-btn" id="subs-next">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Email events panel -->
+    <div class="tab-panel" id="panel-events">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>User</th><th>Subject</th><th>Sender domain</th><th>Processed</th></tr>
+          </thead>
+          <tbody id="events-tbody"><tr><td colspan="4"><div class="loader"></div></td></tr></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="events-pagination" style="display:none">
+        <span class="pagination-info" id="events-pag-info"></span>
+        <div class="pagination-btns">
+          <button class="page-btn" id="events-prev">← Prev</button>
+          <button class="page-btn" id="events-next">Next →</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const API = /censored-link\.com/.test(location.hostname)
+    ? 'https://api.censored-link.com'
+    : '';
+
+  if (!localStorage.getItem('accessToken')) location.href = '/login';
+
+  // ── Auth helper ──
+  async function apiFetch(path, opts = {}) {
+    const token = localStorage.getItem('accessToken');
+    const res = await fetch(API + path, {
+      ...opts,
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', ...(opts.headers || {}) },
+    });
+    if (res.status === 401) {
+      localStorage.clear(); location.href = '/login'; return null;
+    }
+    return res;
+  }
+
+  // ── Toast ──
+  function toast(msg, dur = 2500) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), dur);
+  }
+
+  // ── Gate: must be admin ──
+  (async () => {
+    const res = await apiFetch('/v1/me');
+    if (!res) return;
+    const me = await res.json();
+    if (!me.isAdmin) { location.href = '/dashboard'; return; }
+    init();
+  })();
+
+  function escHtml(s) {
+    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function fmtDate(d) {
+    if (!d) return '—';
+    return new Date(d).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+  function fmtPrice(p, c) {
+    if (!p) return '—';
+    try { return new Intl.NumberFormat(undefined, { style: 'currency', currency: c || 'USD', maximumFractionDigits: 2 }).format(p); }
+    catch { return `${p} ${c}`; }
+  }
+
+  // ── Tab navigation ──
+  const panels = { overview: 'Overview', users: 'Users', subscriptions: 'Subscriptions', events: 'Email Events' };
+  const panelSubs = { overview: 'Platform stats', users: 'Manage accounts', subscriptions: 'All detected subscriptions', events: 'Processed email events' };
+
+  document.querySelectorAll('.sidebar-link[data-panel]').forEach(link => {
+    link.addEventListener('click', () => {
+      const id = link.dataset.panel;
+      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('panel-' + id).classList.add('active');
+      document.getElementById('panel-title').textContent = panels[id];
+      document.getElementById('panel-sub').textContent   = panelSubs[id];
+      document.getElementById('user-search').style.display = id === 'users' ? '' : 'none';
+      if (id === 'users' && !usersLoaded)         loadUsers();
+      if (id === 'subscriptions' && !subsLoaded)  loadSubs();
+      if (id === 'events' && !eventsLoaded)       loadEvents();
+    });
+  });
+
+  let usersLoaded = false, subsLoaded = false, eventsLoaded = false;
+  let usersPage = 1, subsPage = 1, eventsPage = 1;
+
+  // ── Overview ──
+  async function loadOverview() {
+    const res = await apiFetch('/v1/admin/stats');
+    if (!res) return;
+    const d = await res.json();
+    const u = d.users;
+    document.getElementById('stat-grid').innerHTML = `
+      <div class="stat-card"><div class="stat-label">Total users</div><div class="stat-value">${u.total}</div></div>
+      <div class="stat-card"><div class="stat-label">Active plans</div><div class="stat-value green">${u.active}</div></div>
+      <div class="stat-card"><div class="stat-label">On trial</div><div class="stat-value yellow">${u.trial}</div></div>
+      <div class="stat-card"><div class="stat-label">Free tier</div><div class="stat-value">${u.free}</div></div>
+      <div class="stat-card"><div class="stat-label">Expired</div><div class="stat-value red">${u.expired + u.cancelled}</div></div>
+      <div class="stat-card"><div class="stat-label">Subscriptions</div><div class="stat-value">${d.subscriptions}</div></div>`;
+
+    const usersRes = await apiFetch('/v1/admin/users?limit=10');
+    if (!usersRes) return;
+    const ud = await usersRes.json();
+    document.getElementById('recent-list').innerHTML = ud.users.map(u => `
+      <div class="recent-item">
+        <div class="recent-avatar">${escHtml(u.email[0]).toUpperCase()}</div>
+        <div class="recent-email">${escHtml(u.email)}</div>
+        <span class="pill pill-${u.planStatus}">${u.planStatus}</span>
+        <div class="recent-meta">${fmtDate(u.createdAt)}</div>
+      </div>`).join('');
+  }
+
+  // ── Users ──
+  function makePlanSelect(userId, current) {
+    const opts = ['TRIAL','FREE','ACTIVE','EXPIRED','CANCELLED'].map(s =>
+      `<option value="${s}" ${s === current ? 'selected' : ''}>${s}</option>`).join('');
+    return `<select class="plan-select" data-uid="${escHtml(userId)}">${opts}</select>`;
+  }
+
+  async function loadUsers(page = 1) {
+    usersPage = page;
+    const search = document.getElementById('user-search').value.trim();
+    const qs = `?page=${page}&limit=20${search ? '&search=' + encodeURIComponent(search) : ''}`;
+    const res = await apiFetch('/v1/admin/users' + qs);
+    if (!res) return;
+    const d = await res.json();
+    usersLoaded = true;
+
+    document.getElementById('users-tbody').innerHTML = d.users.length
+      ? d.users.map(u => `
+        <tr>
+          <td>${escHtml(u.email)}${u.isAdmin ? ' <span class="pill" style="background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)">admin</span>' : ''}</td>
+          <td>${makePlanSelect(u.id, u.planStatus)}</td>
+          <td>${fmtDate(u.trialEndsAt)}</td>
+          <td>${u._count?.subscriptions ?? 0}</td>
+          <td>${fmtDate(u.createdAt)}</td>
+          <td><button class="btn-del" data-uid="${escHtml(u.id)}">Delete</button></td>
+        </tr>`).join('')
+      : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">No users found</td></tr>';
+
+    // Pagination
+    const pag = document.getElementById('users-pagination');
+    pag.style.display = d.pages > 1 ? '' : 'none';
+    document.getElementById('users-pag-info').textContent = `Page ${d.page} of ${d.pages} · ${d.total} users`;
+    document.getElementById('users-prev').disabled = d.page <= 1;
+    document.getElementById('users-next').disabled = d.page >= d.pages;
+
+    // Plan select change
+    document.querySelectorAll('.plan-select').forEach(sel => {
+      sel.addEventListener('change', async () => {
+        sel.classList.add('saving');
+        const res = await apiFetch(`/v1/admin/users/${sel.dataset.uid}`, {
+          method: 'PATCH', body: JSON.stringify({ planStatus: sel.value }),
+        });
+        sel.classList.remove('saving');
+        if (res?.ok) toast('Plan updated');
+        else toast('Update failed');
+      });
+    });
+
+    // Delete buttons
+    document.querySelectorAll('.btn-del').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Delete this user and all their data? This cannot be undone.')) return;
+        const res = await apiFetch(`/v1/admin/users/${btn.dataset.uid}`, { method: 'DELETE' });
+        if (res?.status === 204) { toast('User deleted'); loadUsers(usersPage); }
+        else toast('Delete failed');
+      });
+    });
+  }
+
+  document.getElementById('users-prev').addEventListener('click', () => loadUsers(usersPage - 1));
+  document.getElementById('users-next').addEventListener('click', () => loadUsers(usersPage + 1));
+
+  let searchTimeout;
+  document.getElementById('user-search').addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => loadUsers(1), 350);
+  });
+
+  // ── Subscriptions ──
+  async function loadSubs(page = 1) {
+    subsPage = page;
+    const res = await apiFetch(`/v1/admin/subscriptions?page=${page}&limit=20`);
+    if (!res) return;
+    const d = await res.json();
+    subsLoaded = true;
+
+    document.getElementById('subs-tbody').innerHTML = d.subscriptions.length
+      ? d.subscriptions.map(s => `
+        <tr>
+          <td>${escHtml(s.user?.email ?? '—')}</td>
+          <td>${escHtml(s.serviceName)}</td>
+          <td>${fmtPrice(s.price, s.currency)}</td>
+          <td>${fmtDate(s.renewalDate)}</td>
+          <td><span class="pill pill-${s.status}">${s.status}</span></td>
+          <td>${fmtDate(s.createdAt)}</td>
+        </tr>`).join('')
+      : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">No subscriptions</td></tr>';
+
+    const pag = document.getElementById('subs-pagination');
+    pag.style.display = d.pages > 1 ? '' : 'none';
+    document.getElementById('subs-pag-info').textContent = `Page ${d.page} of ${d.pages} · ${d.total} total`;
+    document.getElementById('subs-prev').disabled = d.page <= 1;
+    document.getElementById('subs-next').disabled = d.page >= d.pages;
+  }
+
+  document.getElementById('subs-prev').addEventListener('click', () => loadSubs(subsPage - 1));
+  document.getElementById('subs-next').addEventListener('click', () => loadSubs(subsPage + 1));
+
+  // ── Email events ──
+  async function loadEvents(page = 1) {
+    eventsPage = page;
+    const res = await apiFetch(`/v1/admin/email-events?page=${page}&limit=20`);
+    if (!res) return;
+    const d = await res.json();
+    eventsLoaded = true;
+
+    document.getElementById('events-tbody').innerHTML = d.events.length
+      ? d.events.map(e => `
+        <tr>
+          <td>${escHtml(e.user?.email ?? '—')}</td>
+          <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(e.subject ?? '')}">${escHtml(e.subject ?? '—')}</td>
+          <td>${escHtml(e.senderDomain ?? '—')}</td>
+          <td>${fmtDate(e.processedAt)}</td>
+        </tr>`).join('')
+      : '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:2rem">No events</td></tr>';
+
+    const pag = document.getElementById('events-pagination');
+    pag.style.display = d.pages > 1 ? '' : 'none';
+    document.getElementById('events-pag-info').textContent = `Page ${d.page} of ${d.pages} · ${d.total} total`;
+    document.getElementById('events-prev').disabled = d.page <= 1;
+    document.getElementById('events-next').disabled = d.page >= d.pages;
+  }
+
+  document.getElementById('events-prev').addEventListener('click', () => loadEvents(eventsPage - 1));
+  document.getElementById('events-next').addEventListener('click', () => loadEvents(eventsPage + 1));
+
+  // ── Init ──
+  function init() {
+    loadOverview();
+  }
+</script>
+</body>
+</html>

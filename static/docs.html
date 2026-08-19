@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Documentation — App Data API</title>
+<meta name="description" content="App Data API documentation — coming soon. Contact us to get early access and a documentation preview.">
+<link rel="canonical" href="https://data.censored-link.com/docs.html">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --black: #080808; --text: #f5f0ea; --muted: rgba(245,240,234,0.45); --yellow: #F5A623; --border: rgba(245,166,35,0.1); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Outfit', sans-serif; background: var(--black); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 3rem; border-bottom: 1px solid var(--border); }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--yellow); text-decoration: none; letter-spacing: 0.06em; }
+  .logo-tag { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); border-radius: 3px; padding: 0.2rem 0.55rem; }
+  .nav-back { font-size: 0.83rem; color: var(--muted); text-decoration: none; }
+  .nav-back:hover { color: var(--text); }
+  main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 4rem 2rem; }
+  .eyebrow { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--yellow); margin-bottom: 1.25rem; }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 8vw, 6rem); letter-spacing: 0.03em; line-height: 0.9; margin-bottom: 1.5rem; }
+  h1 em { color: var(--yellow); font-style: normal; }
+  p { font-size: 0.95rem; color: var(--muted); max-width: 480px; line-height: 1.7; margin-bottom: 2.5rem; }
+  .endpoints { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 3rem; text-align: left; }
+  .ep { background: rgba(245,166,35,0.05); border: 1px solid rgba(245,166,35,0.12); border-radius: 6px; padding: 0.85rem 1.25rem; display: flex; align-items: center; gap: 1rem; }
+  .ep-method { font-family: monospace; font-size: 0.7rem; font-weight: 700; color: var(--yellow); width: 36px; }
+  .ep-path { font-family: monospace; font-size: 0.82rem; color: var(--text); }
+  .ep-desc { font-size: 0.8rem; color: var(--muted); margin-left: auto; }
+  .cta { background: var(--yellow); color: var(--black); font-size: 0.9rem; font-weight: 600; padding: 0.85rem 2rem; border-radius: 5px; text-decoration: none; transition: background 0.2s; }
+  .cta:hover { background: #ffb835; }
+  footer { text-align: center; padding: 2rem; font-size: 0.78rem; color: var(--muted); border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<nav>
+  <div style="display:flex;align-items:center;gap:0.75rem">
+    <a class="logo" href="https://data.censored-link.com">APP</a>
+    <span class="logo-tag">Data API</span>
+  </div>
+  <a class="nav-back" href="https://data.censored-link.com">← Back to API</a>
+</nav>
+<main>
+  <div class="eyebrow">// API Documentation</div>
+  <h1>Docs are<br><em>coming soon</em></h1>
+  <p>Full OpenAPI 3.0 documentation is in progress and will be published when the API launches. In the meantime, here's a preview of the available endpoints.</p>
+  <div class="endpoints">
+    <div class="ep"><span class="ep-method">GET</span><span class="ep-path">/v1/services/:slug/pricing</span><span class="ep-desc">Current + historical price</span></div>
+    <div class="ep"><span class="ep-method">GET</span><span class="ep-path">/v1/services/:slug/cancel-score</span><span class="ep-desc">Difficulty score + dark patterns</span></div>
+    <div class="ep"><span class="ep-method">GET</span><span class="ep-path">/v1/services/:slug/competitors</span><span class="ep-desc">Competitor pricing map</span></div>
+    <div class="ep"><span class="ep-method">GET</span><span class="ep-path">/v1/signals</span><span class="ep-desc">Anonymized subscriber signals</span></div>
+    <div class="ep"><span class="ep-method">GET</span><span class="ep-path">/v1/services/:slug/trials</span><span class="ep-desc">Trial mix for a service</span></div>
+  </div>
+  <a href="mailto:api@app.censored-link.com?subject=API%20Documentation%20Request" class="cta">Request early access &amp; docs preview →</a>
+</main>
+<footer>© 2025 App &nbsp;·&nbsp; <a href="/privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="/terms.html">Terms</a> &nbsp;·&nbsp; <a href="/dpa.html">DPA</a></footer>
+</body>
+</html>

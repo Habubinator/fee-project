@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App — Dashboard</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:         #f7f3ed;
+    --cream:         #ede8df;
+    --cream2:        #e4ddd2;
+    --yellow:        #F5A623;
+    --yellow-dark:   #e09318;
+    --yellow-dim:    rgba(245,166,35,0.12);
+    --yellow-border: rgba(245,166,35,0.35);
+    --ink:           #0d0c0a;
+    --muted:         rgba(13,12,10,0.42);
+    --muted2:        rgba(13,12,10,0.62);
+    --border:        rgba(13,12,10,0.1);
+    --green:         #2e7d52;
+    --green-dim:     rgba(46,125,82,0.1);
+    --green-border:  rgba(46,125,82,0.25);
+    --red:           #c0392b;
+    --red-dim:       rgba(192,57,43,0.08);
+    --red-border:    rgba(192,57,43,0.2);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Outfit', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; }
+
+  /* ── Nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem; height: 60px;
+    background: rgba(247,243,237,0.92); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-l { display: flex; align-items: center; gap: 2rem; }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.06em; color: var(--yellow); text-decoration: none; }
+  .nav-link { font-size: 0.85rem; color: var(--muted); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover, .nav-link.active { color: var(--ink); }
+  .nav-r { display: flex; align-items: center; gap: 1rem; }
+  .user-pill {
+    font-size: 0.78rem; color: var(--muted2); background: var(--cream);
+    border: 1px solid var(--border); border-radius: 100px;
+    padding: 0.3rem 0.85rem; max-width: 200px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .nav-admin-link { font-size: 0.78rem; color: var(--red); font-weight: 600; text-decoration: none; display: none; }
+  .btn-signout {
+    font-size: 0.78rem; color: var(--muted); background: none;
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 0.35rem 0.85rem; cursor: pointer; font-family: 'Outfit', sans-serif;
+    transition: background 0.2s, color 0.2s;
+  }
+  .btn-signout:hover { background: var(--cream2); color: var(--ink); }
+
+  /* ── Main layout ── */
+  main { max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
+
+  /* ── Plan banner ── */
+  .plan-banner {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    padding: 1.1rem 1.5rem; border-radius: 12px; margin-bottom: 2rem;
+    border: 1px solid var(--border); background: var(--cream);
+  }
+  .plan-banner.trial  { background: var(--yellow-dim);  border-color: var(--yellow-border); }
+  .plan-banner.active { background: var(--green-dim);   border-color: var(--green-border); }
+  .plan-banner.alert  { background: var(--red-dim);     border-color: var(--red-border); }
+  .plan-info { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .plan-pill {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 0.25rem 0.8rem; border-radius: 100px;
+  }
+  .plan-pill.trial  { background: var(--yellow); color: var(--ink); }
+  .plan-pill.active { background: var(--green);  color: #fff; }
+  .plan-pill.free   { background: var(--cream2); color: var(--muted2); border: 1px solid var(--border); }
+  .plan-pill.alert  { background: var(--red);    color: #fff; }
+  .plan-text { font-size: 0.88rem; color: var(--muted2); }
+  .plan-bar-wrap { width: 160px; height: 4px; background: rgba(13,12,10,0.08); border-radius: 2px; overflow: hidden; }
+  .plan-bar { height: 100%; background: var(--yellow); border-radius: 2px; transition: width 0.6s; }
+  .btn-upgrade {
+    background: var(--yellow); color: var(--ink);
+    font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 600;
+    padding: 0.55rem 1.25rem; border: none; border-radius: 8px; cursor: pointer;
+    text-decoration: none; display: inline-block;
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+  .btn-upgrade:hover { background: var(--yellow-dark); box-shadow: 0 4px 16px rgba(245,166,35,0.3); }
+
+  /* ── Stats row ── */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+  .stat-card {
+    background: #fff; border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+  }
+  .stat-label { font-size: 0.73rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem; }
+  .stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem; letter-spacing: 0.02em; color: var(--ink); }
+  .stat-sub   { font-size: 0.75rem; color: var(--muted); margin-top: 0.15rem; }
+
+  /* ── Gmail connect card ── */
+  .gmail-card {
+    display: flex; align-items: center; gap: 1.5rem;
+    padding: 1.5rem 2rem; border-radius: 14px; margin-bottom: 2rem;
+    background: #fff; border: 1.5px dashed var(--yellow-border);
+    transition: border-color 0.2s;
+  }
+  .gmail-card:hover { border-color: var(--yellow); }
+  .gmail-icon { font-size: 2.2rem; flex-shrink: 0; }
+  .gmail-body h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; }
+  .gmail-body p  { font-size: 0.83rem; color: var(--muted); }
+  .btn-gmail {
+    margin-left: auto; flex-shrink: 0;
+    background: var(--ink); color: var(--paper);
+    font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 600;
+    padding: 0.6rem 1.35rem; border: none; border-radius: 8px; cursor: pointer;
+    transition: background 0.2s; white-space: nowrap;
+  }
+  .btn-gmail:hover { background: #222; }
+
+  /* ── Section header ── */
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 0.04em; }
+
+  /* ── Subscription grid ── */
+  .sub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .sub-card {
+    background: #fff; border: 1px solid var(--border); border-radius: 14px;
+    padding: 1.4rem 1.5rem; cursor: default;
+    transition: box-shadow 0.2s, transform 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .sub-card:hover { box-shadow: 0 8px 32px rgba(13,12,10,0.1); transform: translateY(-2px); }
+  .sub-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem; }
+  .service-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 0.03em; line-height: 1.1; }
+  .status-pill {
+    font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 0.2rem 0.6rem; border-radius: 100px; flex-shrink: 0;
+  }
+  .status-ACTIVE      { background: var(--green-dim);  color: var(--green);       border: 1px solid var(--green-border); }
+  .status-TRIAL       { background: var(--yellow-dim); color: var(--yellow-dark); border: 1px solid var(--yellow-border); }
+  .status-CANCELLED   { background: var(--red-dim);    color: var(--red);         border: 1px solid var(--red-border); }
+  .status-PRICE_HIKED { background: rgba(192,57,43,0.12); color: var(--red);     border: 1px solid var(--red-border); }
+  .status-UNKNOWN, .status-UNUSED { background: var(--cream); color: var(--muted2); border: 1px solid var(--border); }
+  .sub-price { font-size: 1.4rem; font-weight: 600; margin-bottom: 0.15rem; }
+  .sub-meta  { font-size: 0.78rem; color: var(--muted); margin-bottom: 1rem; }
+  .sub-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 0.85rem; border-top: 1px solid var(--border); }
+  .sub-renewal { font-size: 0.75rem; color: var(--muted); }
+  .cancel-link { font-size: 0.75rem; color: var(--red); text-decoration: none; font-weight: 500; }
+  .cancel-link:hover { text-decoration: underline; }
+
+  /* Limited ghost card */
+  .ghost-card {
+    background: var(--cream); border: 1px dashed var(--border); border-radius: 14px;
+    padding: 1.4rem 1.5rem; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; gap: 0.75rem;
+    min-height: 160px;
+  }
+  .ghost-card p { font-size: 0.85rem; color: var(--muted); }
+
+  /* Empty state */
+  .empty-state {
+    grid-column: 1 / -1; text-align: center; padding: 4rem 1rem;
+  }
+  .empty-icon {
+    width: 56px; height: 56px; margin: 0 auto 1.5rem;
+    background: var(--cream); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
+  }
+  .empty-state h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .empty-state p  { font-size: 0.88rem; color: var(--muted); max-width: 360px; margin: 0 auto; }
+
+  /* Loading skeleton */
+  @keyframes shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+  .skeleton {
+    background: linear-gradient(90deg, var(--cream) 25%, var(--cream2) 50%, var(--cream) 75%);
+    background-size: 800px 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: 6px;
+  }
+  .skel-card { background: var(--cream); border-radius: 14px; padding: 1.4rem 1.5rem; border: 1px solid var(--border); }
+  .skel-line { height: 14px; margin-bottom: 0.6rem; }
+  .skel-h    { height: 22px; width: 55%; }
+  .skel-p    { width: 80%; }
+  .skel-s    { width: 40%; }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) { .stats-row { grid-template-columns: repeat(2, 1fr); } .sub-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .stats-row { grid-template-columns: 1fr; } .sub-grid { grid-template-columns: 1fr; } nav { padding: 0 1.25rem; } main { padding: 1.5rem 1rem 3rem; } .gmail-card { flex-wrap: wrap; } .btn-gmail { margin-left: 0; width: 100%; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-l">
+    <a href="/" class="logo">APP</a>
+    <a href="/dashboard" class="nav-link active">Dashboard</a>
+  </div>
+  <div class="nav-r">
+    <a href="/admin" class="nav-admin-link" id="admin-link">Admin ↗</a>
+    <div class="user-pill" id="user-email">Loading…</div>
+    <button class="btn-signout" id="signout-btn">Sign out</button>
+  </div>
+</nav>
+
+<main>
+  <!-- Plan banner -->
+  <div class="plan-banner" id="plan-banner" style="display:none"></div>
+
+  <!-- Stats -->
+  <div class="stats-row" id="stats-row">
+    <div class="skel-card"><div class="skeleton skel-line skel-h"></div><div class="skeleton skel-line skel-p"></div><div class="skeleton skel-line skel-s"></div></div>
+    <div class="skel-card"><div class="skeleton skel-line skel-h"></div><div class="skeleton skel-line skel-p"></div><div class="skeleton skel-line skel-s"></div></div>
+    <div class="skel-card"><div class="skeleton skel-line skel-h"></div><div class="skeleton skel-line skel-p"></div><div class="skeleton skel-line skel-s"></div></div>
+    <div class="skel-card"><div class="skeleton skel-line skel-h"></div><div class="skeleton skel-line skel-p"></div><div class="skeleton skel-line skel-s"></div></div>
+  </div>
+
+  <!-- Gmail connect card -->
+  <div class="gmail-card" id="gmail-card" style="display:none">
+    <div class="gmail-icon">✉️</div>
+    <div class="gmail-body">
+      <h3>Connect your Gmail</h3>
+      <p>App will scan your inbox for subscription receipts — automatically, in the background.</p>
+    </div>
+    <button class="btn-gmail" id="gmail-btn">Connect Gmail →</button>
+  </div>
+
+  <!-- Subscriptions -->
+  <div class="section-header">
+    <div class="section-title">Your subscriptions</div>
+  </div>
+  <div class="sub-grid" id="sub-grid">
+    <div class="skel-card"><div class="skeleton skel-line skel-h"></div><div class="skeleton skel-line skel-p"></div><div class="skeleton skel-line skel-s"></div></div>
+    <div class="skel-card"><div class="skeleton skel-line skel-h"></div><div class="skeleton skel-line skel-p"></div><div class="skeleton skel-line skel-s"></div></div>
+    <div class="skel-card"><div class="skeleton skel-line skel-h"></div><div class="skeleton skel-line skel-p"></div><div class="skeleton skel-line skel-s"></div></div>
+  </div>
+</main>
+
+<script>
+  const API = /censored-link\.com/.test(location.hostname)
+    ? 'https://api.censored-link.com'
+    : '';
+
+  if (!localStorage.getItem('accessToken')) location.href = '/login';
+
+  // ── API helper with auto-refresh ──
+  async function apiFetch(path, opts = {}) {
+    const token = localStorage.getItem('accessToken');
+    const res = await fetch(API + path, {
+      ...opts,
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', ...(opts.headers || {}) },
+    });
+    if (res.status === 401) {
+      const refreshed = await tryRefresh();
+      if (!refreshed) { signOut(); return null; }
+      return apiFetch(path, opts);
+    }
+    return res;
+  }
+
+  async function tryRefresh() {
+    const rt = localStorage.getItem('refreshToken');
+    if (!rt) return false;
+    try {
+      const res = await fetch(`${API}/v1/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken: rt }),
+      });
+      if (!res.ok) return false;
+      const data = await res.json();
+      localStorage.setItem('accessToken',  data.accessToken);
+      localStorage.setItem('refreshToken', data.refreshToken);
+      return true;
+    } catch { return false; }
+  }
+
+  function signOut() {
+    apiFetch('/v1/auth/logout', { method: 'POST' }).catch(() => {});
+    localStorage.clear();
+    location.href = '/';
+  }
+  document.getElementById('signout-btn').addEventListener('click', signOut);
+
+  // ── Render plan banner ──
+  function renderBanner(user) {
+    const banner = document.getElementById('plan-banner');
+    banner.style.display = '';
+    const now = Date.now();
+
+    if (user.planStatus === 'ACTIVE') {
+      const expires = user.planExpiresAt ? new Date(user.planExpiresAt).toLocaleDateString() : 'N/A';
+      banner.className = 'plan-banner active';
+      banner.innerHTML = `
+        <div class="plan-info">
+          <span class="plan-pill active">Active</span>
+          <span class="plan-text">Subscription active · expires ${expires}</span>
+        </div>`;
+    } else if (user.planStatus === 'TRIAL') {
+      const msLeft  = new Date(user.trialEndsAt) - now;
+      const daysLeft = Math.max(0, Math.ceil(msLeft / 86400000));
+      const total   = 14;
+      const pct     = Math.max(0, Math.min(100, (daysLeft / total) * 100));
+      banner.className = 'plan-banner trial';
+      banner.innerHTML = `
+        <div class="plan-info">
+          <span class="plan-pill trial">Trial</span>
+          <span class="plan-text">${daysLeft} day${daysLeft !== 1 ? 's' : ''} remaining</span>
+          <div class="plan-bar-wrap"><div class="plan-bar" style="width:${pct}%"></div></div>
+        </div>
+        <a href="#" class="btn-upgrade" id="upgrade-btn">Upgrade — $12/yr →</a>`;
+      document.getElementById('upgrade-btn').addEventListener('click', e => { e.preventDefault(); doUpgrade(); });
+    } else if (user.planStatus === 'FREE') {
+      banner.className = 'plan-banner';
+      banner.innerHTML = `
+        <div class="plan-info">
+          <span class="plan-pill free">Free plan</span>
+          <span class="plan-text">Up to 10 subscriptions</span>
+        </div>
+        <a href="#" class="btn-upgrade" id="upgrade-btn">Upgrade — $12/yr →</a>`;
+      document.getElementById('upgrade-btn').addEventListener('click', e => { e.preventDefault(); doUpgrade(); });
+    } else {
+      banner.className = 'plan-banner alert';
+      banner.innerHTML = `
+        <div class="plan-info">
+          <span class="plan-pill alert">Trial ended</span>
+          <span class="plan-text">Upgrade to keep full access</span>
+        </div>
+        <a href="#" class="btn-upgrade" id="upgrade-btn">Upgrade — $12/yr →</a>`;
+      document.getElementById('upgrade-btn').addEventListener('click', e => { e.preventDefault(); doUpgrade(); });
+    }
+  }
+
+  async function doUpgrade() {
+    try {
+      const res  = await apiFetch('/v1/billing/checkout', { method: 'POST' });
+      if (!res) return;
+      const data = await res.json();
+      if (data.pageUrl) location.href = data.pageUrl;
+    } catch { alert('Payment service unavailable — please try again shortly.'); }
+  }
+
+  // ── Render stats ──
+  function renderStats(subs) {
+    const active    = subs.filter(s => s.status === 'ACTIVE' || s.status === 'TRIAL').length;
+    const annual    = subs.filter(s => s.price).reduce((a, s) => a + s.price, 0);
+    const trials    = subs.filter(s => s.trialStatus).length;
+    const priceHike = subs.filter(s => s.status === 'PRICE_HIKED').length;
+
+    document.getElementById('stats-row').innerHTML = `
+      <div class="stat-card">
+        <div class="stat-label">Annual spend</div>
+        <div class="stat-value">$${annual.toFixed(0)}</div>
+        <div class="stat-sub">across all subscriptions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active</div>
+        <div class="stat-value">${active}</div>
+        <div class="stat-sub">subscriptions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Trials</div>
+        <div class="stat-value">${trials}</div>
+        <div class="stat-sub">active trials</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Price hikes</div>
+        <div class="stat-value" style="${priceHike > 0 ? 'color:var(--red)' : ''}">${priceHike}</div>
+        <div class="stat-sub">detected recently</div>
+      </div>`;
+  }
+
+  // ── Render subscriptions ──
+  const STATUS_LABELS = {
+    ACTIVE: 'Active', TRIAL: 'Trial', CANCELLED: 'Cancelled',
+    PRICE_HIKED: 'Price ↑', UNUSED: 'Unused', UNKNOWN: 'Unknown',
+  };
+  function statusClass(s) {
+    const map = { ACTIVE:'ACTIVE', TRIAL:'TRIAL', CANCELLED:'CANCELLED', PRICE_HIKED:'PRICE_HIKED', UNUSED:'UNUSED' };
+    return 'status-' + (map[s] || 'UNKNOWN');
+  }
+  function statusLabel(s) { return STATUS_LABELS[s] || s; }
+  function fmtDate(d) {
+    if (!d) return 'Unknown';
+    return new Date(d).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+  function fmtPrice(price, currency) {
+    if (!price) return '—';
+    return new Intl.NumberFormat(undefined, { style: 'currency', currency: currency || 'USD', maximumFractionDigits: 2 }).format(price);
+  }
+
+  function renderSubs(subs, limited, upgradeUrl) {
+    const grid = document.getElementById('sub-grid');
+    if (!subs.length) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">✉️</div>
+          <h3>No subscriptions yet</h3>
+          <p>Connect your Gmail above to automatically detect recurring charges and subscriptions.</p>
+        </div>`;
+      return;
+    }
+
+    const cards = subs.map(s => `
+      <div class="sub-card">
+        <div class="sub-card-top">
+          <div class="service-name">${escHtml(s.serviceName)}</div>
+          <span class="status-pill ${statusClass(s.status)}">${statusLabel(s.status)}</span>
+        </div>
+        <div class="sub-price">${fmtPrice(s.price, s.currency)}</div>
+        <div class="sub-meta">${s.trialStatus ? '⏳ Trial · ends ' + fmtDate(s.trialEndsAt) : 'Subscription'}</div>
+        <div class="sub-footer">
+          <span class="sub-renewal">Renews ${fmtDate(s.renewalDate)}</span>
+          <div style="display:flex;gap:0.75rem;align-items:center">
+            ${s.serviceSlug ? `<a href="#" class="cancel-link" onclick="showGuide('${escHtml(s.serviceSlug)}','${escHtml(s.serviceName)}');return false">Guide ↗</a>` : ''}
+            ${s.cancelUrl ? `<a href="${escHtml(s.cancelUrl)}" class="cancel-link" target="_blank" rel="noopener">Cancel ↗</a>` : ''}
+          </div>
+        </div>
+      </div>`).join('');
+
+    const ghost = limited ? `
+      <div class="ghost-card">
+        <p>More subscriptions detected</p>
+        <a href="#" class="btn-upgrade" id="grid-upgrade-btn" style="font-size:0.82rem;padding:0.45rem 1rem">Upgrade to see all →</a>
+      </div>` : '';
+
+    grid.innerHTML = cards + ghost;
+    if (limited) {
+      document.getElementById('grid-upgrade-btn')?.addEventListener('click', e => { e.preventDefault(); doUpgrade(); });
+    }
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ── Gmail connect ──
+  document.getElementById('gmail-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('gmail-btn');
+    btn.textContent = 'Connecting…';
+    btn.disabled = true;
+    try {
+      const res = await apiFetch('/v1/auth/gmail');
+      if (!res) return;
+      const data = await res.json();
+      if (data.url) location.href = data.url;
+      else { btn.textContent = 'Connect Gmail →'; btn.disabled = false; }
+    } catch {
+      btn.textContent = 'Connect Gmail →';
+      btn.disabled = false;
+    }
+  });
+
+  // ── Boot ──
+  async function boot() {
+    const [meRes, subRes] = await Promise.all([
+      apiFetch('/v1/me'),
+      apiFetch('/v1/subscriptions'),
+    ]);
+    if (!meRes || !subRes) return;
+
+    const me   = await meRes.json();
+    const subs = await subRes.json();
+
+    // User pill + admin link
+    document.getElementById('user-email').textContent = me.email;
+    if (me.isAdmin) document.getElementById('admin-link').style.display = 'inline';
+
+    // Plan banner
+    renderBanner(me);
+
+    // Gmail card
+    if (!me.gmailConnected) document.getElementById('gmail-card').style.display = '';
+
+    // Stats
+    renderStats(subs.subscriptions || []);
+
+    // Subscription grid
+    renderSubs(subs.subscriptions || [], subs.limited, subs.upgradeUrl);
+
+    if (new URLSearchParams(location.search).get('gmail') === 'connected' && !(subs.subscriptions || []).length) {
+      setTimeout(boot, 4000);
+    }
+  }
+
+  boot();
+
+  // ── Cancel guide modal ──
+  async function showGuide(slug, name) {
+    let modal = document.getElementById('guide-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'guide-modal';
+      modal.style.cssText = 'position:fixed;inset:0;z-index:999;background:rgba(13,12,10,0.5);display:flex;align-items:center;justify-content:center;padding:1rem';
+      modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+      document.body.appendChild(modal);
+    }
+    modal.innerHTML = `<div style="background:#fff;border-radius:16px;padding:2rem;max-width:540px;width:100%;max-height:80vh;overflow-y:auto;position:relative">
+      <button onclick="document.getElementById('guide-modal').remove()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.25rem;cursor:pointer;color:var(--muted)">✕</button>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:0.04em;margin-bottom:0.5rem">Cancel guide</div>
+      <div style="font-size:0.85rem;color:var(--muted);margin-bottom:1.5rem">${escHtml(name)}</div>
+      <div id="guide-body" style="font-size:0.9rem;color:var(--muted2)">Loading…</div>
+    </div>`;
+    document.body.appendChild(modal);
+
+    const res = await apiFetch(`/v1/services/${encodeURIComponent(slug)}/cancel-guide`);
+    if (!res || !res.ok) {
+      document.getElementById('guide-body').innerHTML = '<p style="color:var(--red)">Could not load cancel guide. Try again later.</p>';
+      return;
+    }
+    const g = await res.json();
+    const steps = (g.steps || []).map((s, i) => `<li style="margin-bottom:0.4rem">${escHtml(s)}</li>`).join('');
+    const dark  = (g.dark_patterns || []).map(p => `<li>${escHtml(p)}</li>`).join('');
+    const diff  = g.difficulty_score || '?';
+    const mins  = g.estimated_minutes || '?';
+    const diffColor = diff >= 7 ? 'var(--red)' : diff >= 4 ? 'var(--yellow-dark)' : 'var(--green)';
+
+    document.getElementById('guide-body').innerHTML = `
+      <div style="display:flex;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap">
+        <span style="font-size:0.8rem;padding:0.25rem 0.75rem;border-radius:100px;background:var(--cream);border:1px solid var(--border)">
+          Difficulty <strong style="color:${diffColor}">${diff}/10</strong>
+        </span>
+        <span style="font-size:0.8rem;padding:0.25rem 0.75rem;border-radius:100px;background:var(--cream);border:1px solid var(--border)">
+          ~${mins} min &nbsp;·&nbsp; via ${escHtml(g.platform || 'web')}
+        </span>
+      </div>
+      ${steps ? `<ol style="padding-left:1.25rem;margin-bottom:1.25rem">${steps}</ol>` : ''}
+      ${dark ? `<div style="font-size:0.82rem;color:var(--red);margin-top:0.5rem"><strong>Watch out for:</strong><ul style="padding-left:1.25rem;margin-top:0.35rem">${dark}</ul></div>` : ''}
+      ${g.cancel_url ? `<a href="${escHtml(g.cancel_url)}" target="_blank" rel="noopener" class="btn-upgrade" style="display:inline-block;margin-top:1rem;font-size:0.85rem">Go to cancellation page ↗</a>` : ''}`;
+  }
+</script>
+
+<!-- Firebase web push — replace placeholders with values from Firebase Console → Project Settings → Your apps → Web app -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
+<script>
+  const FIREBASE_WEB_CONFIG = {
+    apiKey:            'REPLACE_FIREBASE_API_KEY',
+    authDomain:        'REPLACE_FIREBASE_PROJECT_ID.firebaseapp.com',
+    projectId:         'REPLACE_FIREBASE_PROJECT_ID',
+    messagingSenderId: 'REPLACE_FIREBASE_SENDER_ID',
+    appId:             'REPLACE_FIREBASE_APP_ID',
+  };
+  // From Firebase Console → Project Settings → Cloud Messaging → Web Push certificates → Key pair
+  const FIREBASE_VAPID_KEY = 'REPLACE_FIREBASE_VAPID_KEY';
+
+  async function initWebPush() {
+    if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
+    if (FIREBASE_WEB_CONFIG.apiKey.startsWith('REPLACE_')) return; // not configured yet
+
+    try {
+      firebase.initializeApp(FIREBASE_WEB_CONFIG);
+      const messaging = firebase.messaging();
+
+      const reg = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+      reg.active?.postMessage({ type: 'FIREBASE_CONFIG', config: FIREBASE_WEB_CONFIG });
+
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') return;
+
+      const token = await messaging.getToken({ vapidKey: FIREBASE_VAPID_KEY, serviceWorkerRegistration: reg });
+      if (!token) return;
+
+      await apiFetch('/v1/me/fcm-token', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fcmToken: token }),
+      });
+    } catch (err) {
+      console.warn('[fcm] web push init failed:', err);
+    }
+  }
+
+  // Run after auth check (accessToken present means user is logged in)
+  if (localStorage.getItem('accessToken')) initWebPush();
+</script>
+</body>
+</html>

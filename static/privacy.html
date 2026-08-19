@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — App</title>
+<meta name="description" content="App privacy policy — how we handle your email data, subscription data, and your GDPR rights.">
+<link rel="canonical" href="https://app.censored-link.com/privacy">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --paper: #f7f3ed; --ink: #0d0c0a; --muted: rgba(13,12,10,0.55); --yellow: #F5A623; --border: rgba(13,12,10,0.1); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Outfit', sans-serif; background: var(--paper); color: var(--ink); line-height: 1.75; }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 3rem; border-bottom: 1px solid var(--border); }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--yellow); text-decoration: none; letter-spacing: 0.06em; }
+  .nav-back { font-size: 0.83rem; color: var(--muted); text-decoration: none; }
+  .nav-back:hover { color: var(--ink); }
+  main { max-width: 720px; margin: 4rem auto; padding: 0 2rem 6rem; }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; letter-spacing: 0.04em; margin-bottom: 0.5rem; }
+  .updated { font-size: 0.8rem; color: var(--muted); margin-bottom: 3rem; }
+  h2 { font-size: 1.05rem; font-weight: 600; margin: 2.5rem 0 0.6rem; }
+  p { font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem; }
+  ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+  li { font-size: 0.9rem; color: var(--muted); margin-bottom: 0.35rem; }
+  a { color: var(--yellow); }
+  footer { text-align: center; padding: 2rem; font-size: 0.78rem; color: var(--muted); border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="https://app.censored-link.com">APP</a>
+  <a class="nav-back" href="https://app.censored-link.com">← Back to home</a>
+</nav>
+<main>
+  <h1>Privacy Policy</h1>
+  <div class="updated">Last updated: May 2025 &nbsp;·&nbsp; Applies to app.censored-link.com and data.censored-link.com</div>
+
+  <h2>1. Who we are</h2>
+  <p>App ("we", "us", "our") operates the subscription intelligence platform at app.censored-link.com and the B2B data API at data.censored-link.com. We are the data controller for personal data processed through these services. Contact: <a href="mailto:api@app.censored-link.com">api@app.censored-link.com</a>.</p>
+
+  <h2>2. What data we collect</h2>
+  <p><strong>B2C users (app.censored-link.com):</strong></p>
+  <ul>
+    <li>Email address and hashed password for account authentication.</li>
+    <li>Gmail OAuth tokens (access + refresh) — read-only scope only. Used to scan billing-related emails. Never used to read personal conversations.</li>
+    <li>Subscription records extracted from billing emails: service name, price, currency, renewal date, trial status, and cancellation URL where present.</li>
+    <li>Firebase Cloud Messaging (FCM) token — only if you grant notification permission on your device or browser. Used solely to deliver push alerts.</li>
+    <li>Payment token from Monobank Acquiring — stored for annual auto-renewal only. We never store your full card number or CVV.</li>
+    <li>Basic usage logs: API endpoint calls, timestamps. Used for security, abuse prevention, and service improvement.</li>
+  </ul>
+  <p><strong>B2B API clients (data.censored-link.com):</strong></p>
+  <ul>
+    <li>Company name, contact email, and use-case description provided at sign-up.</li>
+    <li>API usage logs: endpoint calls, timestamps, rate limit consumption. Used for billing and abuse prevention.</li>
+  </ul>
+
+  <h2>3. How we use your data and our legal basis (GDPR)</h2>
+  <ul>
+    <li><strong>Contract performance:</strong> We process your email address, authentication credentials, and billing emails to provide the subscription detection and alerting service you signed up for.</li>
+    <li><strong>Legitimate interests:</strong> We process usage logs and aggregated behavioral signals to improve detection accuracy, prevent abuse, and develop new features. These interests do not override your rights.</li>
+    <li><strong>Consent:</strong> Push notifications require your explicit permission. You may withdraw this consent at any time by revoking notification permission in your device or browser settings.</li>
+    <li><strong>Legal obligation:</strong> We may retain certain records to comply with applicable law, including tax and accounting obligations.</li>
+  </ul>
+  <p>We do not use your data for advertising, and we do not sell individual user data to any third party.</p>
+
+  <h2>4. Data we do NOT collect</h2>
+  <ul>
+    <li>We do not read, store, or process personal, social, or non-billing emails.</li>
+    <li>We do not collect full card numbers, banking credentials, or account passwords for third-party services.</li>
+    <li>We do not use advertising trackers, third-party analytics SDKs, or behavioral profiling cookies.</li>
+    <li>We do not build advertising profiles or sell data to data brokers.</li>
+  </ul>
+
+  <h2>5. Third-party services and international data transfers</h2>
+  <p>We share data with the following third-party processors to operate the service. Some of these processors are located outside the European Economic Area (EEA). Where data is transferred internationally, we rely on standard contractual clauses, adequacy decisions, or other lawful transfer mechanisms.</p>
+  <ul>
+    <li><strong>Google (Gmail OAuth, Firebase):</strong> OAuth authentication and read-only email access. Firebase Cloud Messaging for push notification delivery. Google operates globally including in the United States. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a>.</li>
+    <li><strong>OpenAI (United States):</strong> Billing email content that passes our 3-stage filter is sent to OpenAI's API for structured data extraction. No personal conversations or non-billing emails are ever sent. OpenAI processes this data under a data processing agreement. <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener">OpenAI Privacy Policy</a>.</li>
+    <li><strong>Monobank Acquiring (Ukraine):</strong> Handles payment processing. Receives your payment details directly. We retain only a tokenized payment reference for auto-renewal. <a href="https://www.monobank.ua/legal" target="_blank" rel="noopener">Monobank Terms</a>.</li>
+    <li><strong>Resend:</strong> Transactional email delivery (alerts, receipts, account notices). Processes your email address.</li>
+  </ul>
+
+  <h2>6. Cookies and local storage</h2>
+  <p>We use browser session storage and localStorage solely to maintain your authenticated session (access token and refresh token). We do not use third-party tracking cookies, advertising cookies, or analytics SDKs. No cookie consent banner is required because we do not use non-essential cookies.</p>
+
+  <h2>7. Data retention</h2>
+  <ul>
+    <li><strong>Account data</strong> (email, password hash, OAuth tokens): retained while your account is active. Deleted within 30 days of account closure.</li>
+    <li><strong>Subscription records:</strong> retained while your account is active. Deleted within 30 days of account closure.</li>
+    <li><strong>Email dedup logs</strong> (gmailMessageId, subject, sender domain — no body): retained for 90 days after account closure to prevent re-processing on accidental re-connection.</li>
+    <li><strong>Payment tokens:</strong> deleted immediately upon account closure or upon your written request.</li>
+    <li><strong>Anonymized aggregated B2B signals</strong> (e.g., the percentage of users who cancelled a service at a given price): contain no personal data and are retained indefinitely.</li>
+    <li><strong>Usage logs:</strong> retained for 90 days for security and abuse prevention purposes.</li>
+  </ul>
+
+  <h2>8. Security</h2>
+  <p>We implement appropriate technical and organizational measures to protect your data. Specifically: OAuth tokens are stored encrypted at rest; passwords are hashed using bcrypt with a unique salt per account; all data in transit is protected by TLS 1.2 or higher; our database and Redis instances are not exposed to the public internet. Despite these measures, no system is perfectly secure, and we cannot guarantee absolute security.</p>
+
+  <h2>9. Children's privacy</h2>
+  <p>The service is not directed to children under the age of 18. We do not knowingly collect personal data from anyone under 18. If you believe a child under 18 has provided us with personal data, please contact us and we will delete it promptly.</p>
+
+  <h2>10. Your rights</h2>
+  <p>Depending on your location, you may have the following rights regarding your personal data:</p>
+  <ul>
+    <li><strong>Access:</strong> Request a copy of the personal data we hold about you.</li>
+    <li><strong>Rectification:</strong> Request correction of inaccurate or incomplete data.</li>
+    <li><strong>Erasure:</strong> Request deletion of your personal data ("right to be forgotten").</li>
+    <li><strong>Portability:</strong> Receive your data in a structured, machine-readable format.</li>
+    <li><strong>Restriction:</strong> Request that we limit how we process your data in certain circumstances.</li>
+    <li><strong>Objection:</strong> Object to processing based on legitimate interests.</li>
+    <li><strong>Withdraw consent:</strong> Where processing is based on consent (e.g., push notifications), you may withdraw consent at any time without affecting the lawfulness of prior processing.</li>
+  </ul>
+  <p>To exercise any of these rights, email <a href="mailto:api@app.censored-link.com">api@app.censored-link.com</a>. We will respond within 30 days. We may ask you to verify your identity before fulfilling a request.</p>
+  <p><strong>Right to complain:</strong> If you believe we have not handled your data in accordance with applicable law, you have the right to lodge a complaint with your local data protection supervisory authority. For EU residents, this is typically the data protection authority in the country where you reside.</p>
+
+  <h2>11. California residents (CCPA)</h2>
+  <p>If you are a California resident, you have the right to know what personal information we collect, disclose, or sell; the right to request deletion; and the right not to be discriminated against for exercising these rights. We do not sell personal information as defined under the CCPA. To submit a request, email <a href="mailto:api@app.censored-link.com">api@app.censored-link.com</a>.</p>
+
+  <h2>12. Changes to this policy</h2>
+  <p>We may update this Privacy Policy from time to time. Material changes will be communicated by email to your registered address at least 14 days before taking effect, and by updating the date at the top of this page. Continued use of the service after the effective date constitutes acceptance of the updated policy.</p>
+
+  <h2>13. Data Processing Agreement (B2B)</h2>
+  <p>B2B API customers who process personal data through our API may require a Data Processing Agreement (DPA) under GDPR. Our standard DPA is available at <a href="/dpa">app.censored-link.com/dpa</a>. To execute a DPA, email <a href="mailto:api@app.censored-link.com">api@app.censored-link.com</a>.</p>
+
+  <h2>14. Contact</h2>
+  <p>Privacy questions and data requests: <a href="mailto:api@app.censored-link.com">api@app.censored-link.com</a></p>
+</main>
+<footer>© 2025 App &nbsp;·&nbsp; <a href="/terms">Terms</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/dpa">DPA</a></footer>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App — Payment Confirmed</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:  #f7f3ed;
+    --yellow: #F5A623;
+    --yellow-dark: #e09318;
+    --yellow-dim: rgba(245,166,35,0.12);
+    --yellow-border: rgba(245,166,35,0.35);
+    --ink:    #0d0c0a;
+    --muted:  rgba(13,12,10,0.42);
+    --green:  #2e7d52;
+    --green-dim: rgba(46,125,82,0.1);
+    --green-border: rgba(46,125,82,0.25);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Outfit', sans-serif; background: var(--paper); color: var(--ink);
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 2rem;
+  }
+
+  .success-wrap { text-align: center; max-width: 480px; width: 100%; }
+
+  /* Animated checkmark */
+  .check-circle {
+    width: 88px; height: 88px; margin: 0 auto 2rem;
+    border-radius: 50%;
+    background: var(--green-dim); border: 2px solid var(--green-border);
+    display: flex; align-items: center; justify-content: center;
+    animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  @keyframes pop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .check-svg { width: 40px; height: 40px; }
+  .check-svg circle { fill: none; stroke: var(--green); stroke-width: 2.5; }
+  .check-svg path {
+    fill: none; stroke: var(--green); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 40; stroke-dashoffset: 40;
+    animation: draw 0.4s 0.35s ease forwards;
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 8vw, 5rem);
+    letter-spacing: 0.03em; line-height: 1; margin-bottom: 1rem;
+  }
+  p { font-size: 1rem; color: var(--muted); line-height: 1.6; margin-bottom: 2rem; }
+
+  .btn-dash {
+    display: inline-block;
+    background: var(--yellow); color: var(--ink);
+    font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 600;
+    padding: 0.85rem 2.25rem; border-radius: 8px; text-decoration: none;
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+  .btn-dash:hover { background: var(--yellow-dark); box-shadow: 0 6px 24px rgba(245,166,35,0.3); }
+
+  .countdown { margin-top: 1.5rem; font-size: 0.78rem; color: var(--muted); }
+  .countdown span { font-weight: 600; color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="success-wrap">
+  <div class="check-circle">
+    <svg class="check-svg" viewBox="0 0 52 52">
+      <circle cx="26" cy="26" r="24"/>
+      <path d="M15 26 l8 8 l14-14"/>
+    </svg>
+  </div>
+
+  <h1>You're all set.</h1>
+  <p>Your App subscription is now active.<br>All features are unlocked.</p>
+
+  <a href="/dashboard" class="btn-dash">Go to Dashboard →</a>
+  <div class="countdown">Redirecting in <span id="count">5</span>s…</div>
+</div>
+
+<script>
+  let n = 5;
+  const el = document.getElementById('count');
+  const t = setInterval(() => {
+    n--;
+    el.textContent = n;
+    if (n <= 0) { clearInterval(t); location.href = '/dashboard'; }
+  }, 1000);
+</script>
+</body>
+</html>
